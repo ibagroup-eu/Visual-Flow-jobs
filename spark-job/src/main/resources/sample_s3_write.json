@@ -1,0 +1,36 @@
+{
+  "nodes": [
+    {
+      "id": "gen-table1",
+      "value": {
+        "operation": "READ",
+        "storage": "GENERATOR",
+        "alias": "left"
+      }
+    },
+    {
+      "id": "write1",
+      "value": {
+        "operation": "WRITE",
+        "storage": "s3",
+        "endpoint": "",
+        "ssl": "false",
+        "accessKey": "",
+        "secretKey": "",
+        "bucket": "visualflow-gomel",
+        "path": "test_gen.avro",
+        "format": "avro",
+        "useSchema": "true",
+        "option.avroSchema": "{\"type\":\"record\",\"name\":\"topLevelRecord\",\"fields\":[{\"name\":\"a\",\"type\":[\"int\",\"null\"]},{\"name\":\"b\",\"type\":[\"int\",\"null\"]}]}",
+        "writeMode": "overwrite",
+        "anonymousAccess": "false"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "gen-table1",
+      "target": "write1"
+    }
+  ]
+}

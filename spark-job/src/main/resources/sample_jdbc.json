@@ -1,0 +1,38 @@
+{
+  "nodes": [
+    {
+      "id": "read1",
+      "value": {
+        "operation": "READ",
+        "customSql": "false",
+        "jdbcUrl": "jdbc:sqlserver://okd4w1.okd.gomel.iba.by:31344;databaseName=master",
+        "storage": "mssql",
+        "schema": "dbo",
+        "table": "test_table",
+        "user": "",
+        "password": ""
+      }
+    },
+    {
+      "id": "write1",
+      "value": {
+        "operation": "WRITE",
+        "jdbcUrl": "jdbc:sqlserver://okd4w1.okd.gomel.iba.by:31344;databaseName=master",
+        "storage": "mssql",
+        "schema": "dbo",
+        "table": "test_table1",
+        "writeMode": "overwrite",
+        "user": "",
+        "password": ""
+      }
+    }
+
+  ],
+  "edges": [
+    {
+      "source": "read1",
+      "target": "write1"
+    }
+
+  ]
+}

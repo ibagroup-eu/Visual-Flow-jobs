@@ -1,0 +1,110 @@
+{
+  "nodes": [
+    {
+      "id": "gen-table1",
+      "value": {
+        "operation": "READ",
+        "storage": "GENERATOR",
+        "alias": "left"
+      }
+    },
+    {
+      "id": "gen-table2",
+      "value": {
+        "operation": "READ",
+        "storage": "GENERATOR",
+        "alias": "right"
+      }
+    },
+    {
+      "id": "join-data",
+      "value": {
+        "operation": "JOIN",
+        "joinType": "inner",
+        "columns": "a"
+      }
+    },
+    {
+      "id": "join-data-2",
+      "value": {
+        "operation": "JOIN",
+        "joinType": "inner",
+        "columns": "a"
+      }
+    },
+    {
+      "id": "group-by",
+      "value": {
+        "operation": "GROUP",
+        "groupingCriteria": "salary:avg,test:max,*:count",
+        "groupingColumns": "a"
+      }
+    },
+    {
+      "id": "filtering",
+      "value": {
+        "operation": "FILTER",
+        "condition": "left.a > 1"
+      }
+    },
+    {
+      "id": "print-2",
+      "value": {
+        "operation": "WRITE",
+        "storage": "STDOUT"
+      }
+    },
+    {
+      "id": "print-3",
+      "value": {
+        "operation": "WRITE",
+        "storage": "STDOUT"
+      }
+    },
+    {
+      "id": "print",
+      "value": {
+        "operation": "WRITE",
+        "storage": "STDOUT"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "gen-table1",
+      "target": "join-data"
+    },
+    {
+      "source": "gen-table2",
+      "target": "join-data"
+    },
+    {
+      "source": "join-data",
+      "target": "group-by"
+    },
+    {
+      "source": "join-data",
+      "target": "print-2"
+    },
+    {
+      "source": "join-data",
+      "target": "join-data-2"
+    },
+    {
+      "source": "gen-table1",
+      "target": "join-data-2"
+    },
+    {
+      "source": "join-data-2",
+      "target": "print-3"
+    },
+    {
+      "source": "group-by",
+      "target": "filtering"
+    },
+    {
+      "source": "filtering",
+      "target": "print"
+    }
+  ]
+}

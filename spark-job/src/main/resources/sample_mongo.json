@@ -1,0 +1,39 @@
+{
+    "nodes": [
+        {
+            "id": "read1",
+            "value": {
+                "operation": "READ",
+                "database": "example",
+                "collection": "test_collection",
+                "host": "okd4w0.okd.gomel.iba.by",
+                "port": "31017",
+                "user": "",
+                "password": "",
+                "storage": "mongo",
+                "ssl": "false"
+            }
+        },
+        {
+            "id": "write1",
+            "value": {
+                "operation": "WRITE",
+                "database": "example",
+                "collection": "test_collection1",
+                "host": "okd4w0.okd.gomel.iba.by",
+                "port": "31017",
+                "user": "",
+                "password": "",
+                "writeMode": "overwrite",
+                "storage": "mongo",
+                "ssl": "false"
+            }
+        }
+    ],
+    "edges": [
+        {
+            "source": "read1",
+            "target": "write1"
+        }
+    ]
+}

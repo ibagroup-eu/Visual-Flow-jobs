@@ -1,0 +1,32 @@
+{
+  "nodes": [
+    {
+      "id": "read1",
+      "value": {
+        "operation": "READ",
+        "storage": "s3",
+        "endpoint": "",
+        "ssl": "false",
+        "accessKey": "",
+        "secretKey": "",
+        "bucket": "visualflow-gomel",
+        "path": "test_gen.avro",
+        "format": "avro",
+        "anonymousAccess": "false"
+      }
+    },
+    {
+      "id": "print1",
+      "value": {
+        "operation": "WRITE",
+        "storage": "STDOUT"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "read1",
+      "target": "print1"
+    }
+  ]
+}

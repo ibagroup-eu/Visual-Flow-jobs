@@ -1,0 +1,34 @@
+{
+  "nodes": [
+    {
+      "id": "gen-table1",
+      "value": {
+        "operation": "READ",
+        "storage": "GENERATOR",
+        "alias": "left"
+      }
+    },
+    {
+      "id": "dest-table2",
+      "value": {
+        "operation": "WRITE",
+        "storage": "cos",
+        "accessKey": "xxx",
+        "secretKey": "yyy",
+        "bucket": "big-data-education",
+        "path": "xxx.test4",
+        "format": "csv",
+        "option.header": "true",
+        "option.delimiter": "@",
+        "writeMode": "overwrite",
+        "endpoint": "yyy"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "gen-table1",
+      "target": "dest-table2"
+    }
+  ]
+}

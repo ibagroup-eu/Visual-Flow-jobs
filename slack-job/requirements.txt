@@ -1,0 +1,9 @@
+aiohttp==3.7.4.post0      # via slackclient
+async-timeout==3.0.1      # via aiohttp
+attrs==20.3.0             # via aiohttp
+chardet==3.0.4            # via aiohttp
+idna==2.10                # via yarl
+multidict==5.1.0          # via aiohttp, yarl
+slackclient==2.9.3        # via -r requirements.in
+typing-extensions==3.7.4.3  # via aiohttp
+yarl==1.6.3               # via aiohttp

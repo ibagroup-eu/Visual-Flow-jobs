@@ -1,0 +1,54 @@
+{
+  "nodes": [
+    {
+      "id": "gen-table1",
+      "value": {
+        "operation": "READ",
+        "storage": "GENERATOR",
+        "alias": "left"
+      }
+    },
+    {
+      "id": "dest-table2",
+      "value": {
+        "operation": "WRITE",
+        "storage": "elastic",
+        "nodes": "localhost",
+        "port": "9200",
+        "user": "elastic",
+        "password": "password",
+        "index": "abc"
+      }
+    },
+
+    {
+      "id": "source-table1",
+      "value": {
+        "operation": "READ",
+        "storage": "elastic",
+        "nodes": "localhost",
+        "port": "9200",
+        "user": "elastic",
+        "password": "password",
+        "index": "abc"
+      }
+    },
+    {
+      "id": "print1",
+      "value": {
+        "operation": "WRITE",
+        "storage": "STDOUT"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "gen-table1",
+      "target": "dest-table2"
+    },
+    {
+      "source": "source-table1",
+      "target": "print1"
+    }
+  ]
+}

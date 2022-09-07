@@ -1,0 +1,51 @@
+{
+  "nodes": [
+    {
+      "id": "gen-table1",
+      "value": {
+        "operation": "READ",
+        "storage": "GENERATOR",
+        "alias": "left"
+      }
+    },
+    {
+      "id": "cache",
+      "value": {
+        "operation": "CACHE",
+        "useDisk" : "false",
+        "useMemory" : "true",
+        "useOffHeap" : "false",
+        "deserialized" : "true",
+        "replication" : "1"
+      }
+    },
+    {
+      "id": "print1",
+      "value": {
+        "operation": "WRITE",
+        "storage": "STDOUT"
+      }
+    },
+    {
+      "id": "print2",
+      "value": {
+        "operation": "WRITE",
+        "storage": "STDOUT"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "gen-table1",
+      "target": "cache"
+    },
+    {
+      "source": "cache",
+      "target": "print1"
+    },
+    {
+      "source": "cache",
+      "target": "print2"
+    }
+  ]
+}
