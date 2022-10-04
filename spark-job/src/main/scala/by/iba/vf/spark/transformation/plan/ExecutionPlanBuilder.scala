@@ -25,15 +25,7 @@ import by.iba.vf.spark.transformation.exception.NodeNotFoundException
 import by.iba.vf.spark.transformation.exception.UnknownStageException
 import by.iba.vf.spark.transformation.stage.Stage
 import by.iba.vf.spark.transformation.stage.StageBuilder
-import by.iba.vf.spark.transformation.stage.function.CacheStageBuilder
-import by.iba.vf.spark.transformation.stage.function.ChangeDataCaptureStageBuilder
-import by.iba.vf.spark.transformation.stage.function.FilterStageBuilder
-import by.iba.vf.spark.transformation.stage.function.GroupByStageBuilder
-import by.iba.vf.spark.transformation.stage.function.JoinStageBuilder
-import by.iba.vf.spark.transformation.stage.function.RemoveDuplicatesStageBuilder
-import by.iba.vf.spark.transformation.stage.function.SortStageBuilder
-import by.iba.vf.spark.transformation.stage.function.TransformStageBuilder
-import by.iba.vf.spark.transformation.stage.function.UnionStageBuilder
+import by.iba.vf.spark.transformation.stage.function.{CacheStageBuilder, ChangeDataCaptureStageBuilder, FilterStageBuilder, GroupByStageBuilder, JoinStageBuilder, RemoveDuplicatesStageBuilder, SliceStageBuilder, SortStageBuilder, TransformStageBuilder, UnionStageBuilder}
 import by.iba.vf.spark.transformation.stage.read.{CassandraReadStageBuilder, DataGeneratorStageBuilder, ElasticReadStageBuilder, JdbcReadStageBuilder, MongoReadStageBuilder, ObjectStorageReadCOSStageBuilder, ObjectStorageReadS3StageBuilder, RedisReadStageBuilder, RedshiftReadStageBuilder}
 import by.iba.vf.spark.transformation.stage.write.{CassandraWriteStageBuilder, ElasticWriteStageBuilder, JdbcWriteStageBuilder, MongoWriteStageBuilder, ObjectStorageWriteCOSStageBuilder, ObjectStorageWriteS3StageBuilder, RedisWriteStageBuilder, RedshiftWriteStageBuilder, StdoutWriteStageBuilder}
 
@@ -67,7 +59,8 @@ object ExecutionPlanBuilder {
       UnionStageBuilder,
       ChangeDataCaptureStageBuilder,
       RemoveDuplicatesStageBuilder,
-      SortStageBuilder
+      SortStageBuilder,
+      SliceStageBuilder
     )
 
   def buildExecutionPlan(pc: ProcessConfiguration): ExecutionPlan = {

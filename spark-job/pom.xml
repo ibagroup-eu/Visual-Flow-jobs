@@ -37,7 +37,7 @@
     </repositories>
     <properties>
         <scala.version>2.12.12</scala.version>
-        <spark.version>3.2.1</spark.version>
+        <spark.version>3.2.2</spark.version>
         <scala.maven.plugin.version>4.5.3</scala.maven.plugin.version>
         <maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -116,27 +116,9 @@
             <version>1.11.0</version>
         </dependency>
         <dependency>
-            <groupId>com.github.SparkTC</groupId>
+            <groupId>com.ibm.stocator</groupId>
             <artifactId>stocator</artifactId>
-            <version>1.1.5-SNAPSHOT-ibm-sdk-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>jackson-mapper-asl</artifactId>
-                    <groupId>org.codehaus.jackson</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jackson-core-asl</artifactId>
-                    <groupId>org.codehaus.jackson</groupId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.amazonaws</groupId>
-                    <artifactId>aws-java-sdk</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.javaswift</groupId>
-                    <artifactId>joss</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>1.1.4</version>
         </dependency>
         <dependency>
             <groupId>org.elasticsearch</groupId>
@@ -186,7 +168,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.3.3</version>
+            <version>42.4.1</version>
         </dependency>
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>

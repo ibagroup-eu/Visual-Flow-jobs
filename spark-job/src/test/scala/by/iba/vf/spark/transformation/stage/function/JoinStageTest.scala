@@ -27,18 +27,27 @@ import org.mockito.scalatest.MockitoSugar
 import org.scalatest.PrivateMethodTester
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers._
+import by.iba.vf.spark.transformation.exception.TransformationConfigurationException
 
 class JoinStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodTester {
   it("process") {
     implicit lazy val spark: SparkSession = mock[SparkSession]
-    val fields = Seq("test1", "test2")
+    val fields = Option("test1")
     val joinType = "inner"
     val df = mock[DataFrame]
     val df2 = mock[DataFrame]
     val df3 = mock[DataFrame]
     when(df.as("left")).thenReturn(df)
     when(df2.as("right")).thenReturn(df2)
-    when(df.join(df2, fields, joinType)).thenReturn(df3)
+    if (joinType == "cross") when(df.crossJoin(df2)).thenReturn(df3)
+    else {
+      val fieldsSeq = fields match {
+        case Some(str) => str.split(",").map(_.trim)
+        case None => throw new TransformationConfigurationException("columns field not found")
+      }
+      when(df.join(df2, fieldsSeq, joinType)).thenReturn(df3)
+    }
+    
     val stage = new JoinStage("id", joinType, fields, "1", "2")
 
     val result = stage invokePrivate PrivateMethod[Option[DataFrame]]('process)(Map("1" -> df, "2" -> df2), spark)
@@ -47,14 +56,22 @@ class JoinStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodTeste
   }
 
   it("join") {
-    val fields = Seq("test1", "test2")
+    val fields = Option("test1")
     val joinType = "inner"
     val df = mock[DataFrame]
     val df2 = mock[DataFrame]
     val df3 = mock[DataFrame]
     when(df.as("left")).thenReturn(df)
     when(df2.as("right")).thenReturn(df2)
-    when(df.join(df2, fields, joinType)).thenReturn(df3)
+    if (joinType == "cross") when(df.crossJoin(df2)).thenReturn(df3)
+    else {
+      val fieldsSeq = fields match {
+        case Some(str) => str.split(",").map(_.trim)
+        case None => throw new TransformationConfigurationException("columns field not found")
+      }
+      when(df.join(df2, fieldsSeq, joinType)).thenReturn(df3)
+    }
+
     val stage = new JoinStage("id", joinType, fields, "1", "2")
 
     val result = stage invokePrivate PrivateMethod[DataFrame]('join)(df, df2)

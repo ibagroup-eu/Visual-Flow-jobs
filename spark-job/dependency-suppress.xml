@@ -21,43 +21,18 @@
         <notes><![CDATA[
         This suppresses specific CVEs for the entire project. This is a temporary solution. After the migration to Spark 3.x will be done, the remaining vulnerabilities would have to be fixed.
         ]]></notes>
-        <cve>CVE-2022-26612</cve>
-        <cve>CVE-2008-1997</cve>
+        <cve>CVE-2022-33891</cve>
         <cve>CVE-2020-9480</cve>
+        <cve>CVE-2008-1997</cve>
         <cve>CVE-2018-17190</cve>
-        <cve>CVE-2021-40531</cve>
         <cve>CVE-2021-32626</cve>
-        <cve>CVE-2021-44228</cve>
-        <cve>CVE-2015-8559</cve>
-        <cve>CVE-2020-9492</cve>
-        <cve>CVE-2017-17485</cve>
-        <cve>CVE-2018-5968</cve>
-        <cve>CVE-2019-14379</cve>
+        <cve>CVE-2021-40531</cve>
+        <cve>CVE-2018-7489</cve>
         <cve>CVE-2020-35491</cve>
         <cve>CVE-2020-35490</cve>
-        <cve>CVE-2019-20330</cve>
         <cve>CVE-2020-10673</cve>
-        <cve>CVE-2018-11307</cve>
-        <cve>CVE-2018-14718</cve>
-        <cve>CVE-2018-7489</cve>
-        <cve>CVE-2018-14719</cve>
-        <cve>CVE-2019-17531</cve>
-        <cve>CVE-2019-14540</cve>
-        <cve>CVE-2017-15095</cve>
-        <cve>CVE-2019-16942</cve>
-        <cve>CVE-2019-16943</cve>
-        <cve>CVE-2018-19362</cve>
-        <cve>CVE-2018-19361</cve>
-        <cve>CVE-2018-19360</cve>
-        <cve>CVE-2019-17267</cve>
-        <cve>CVE-2019-16335</cve>
-        <cve>CVE-2018-14721</cve>
-        <cve>CVE-2018-14720</cve>
-        <cve>CVE-2019-14893</cve>
-        <cve>CVE-2019-14892</cve>
-        <cve>CVE-2019-20445</cve>
-        <cve>CVE-2019-20444</cve>
         <cve>CVE-2017-7525</cve>
+        <cve>CVE-2017-16613</cve>
     </suppress>
 </suppressions>
 

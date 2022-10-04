@@ -16,30 +16,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-FROM ghcr.io/ibagomel/spark:spark-3.2.2-bin-hadoop3.2
-
-ARG uid=1000
-ARG gid=1000
-ARG group=job-group
-ARG username=job-user
-
-USER root
-
-
-RUN apt-get update \
-    && apt-get install ca-certificates \
-    && apt-get --only-upgrade install ca-certificates \
-    && /usr/sbin/groupadd -g ${gid} ${group} \
-    && /usr/sbin/useradd -u ${uid} -g ${gid} -m ${username}
-
-COPY log4j.properties /opt/spark/conf/
-COPY log4j2.xml /opt/spark/conf/
-COPY target/spark-transformations-0.1-jar-with-dependencies.jar /opt/spark/work-dir/
-COPY entrypoint.sh /opt/spark/work-dir/
-RUN chmod -R 755 /opt/spark/work-dir
-ADD https://s3.amazonaws.com/redshift-downloads/redshift-keytool.jar /opt/spark/work-dir/
-RUN java -jar /opt/spark/work-dir/redshift-keytool.jar -s
-
-USER ${username}
-
-CMD ["/usr/bin/bash", "/opt/spark/work-dir/entrypoint.sh"]
+dependency-check

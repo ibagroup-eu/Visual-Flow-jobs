@@ -1,0 +1,50 @@
+{
+  "nodes": [
+    {
+      "id": "gen-table1",
+      "value": {
+        "operation": "READ",
+        "storage": "GENERATOR",
+        "alias": "left"
+      }
+    },
+    {
+      "id": "gen-table2",
+      "value": {
+        "operation": "READ",
+        "storage": "GENERATOR",
+        "alias": "right"
+      }
+    },
+    {
+      "id": "join-data",
+      "value": {
+        "operation": "JOIN",
+        "joinType": "cross",
+        "leftDataset": "gen-table1",
+        "rightDataset": "gen-table2"
+      }
+    },
+    {
+      "id": "print",
+      "value": {
+        "operation": "WRITE",
+        "storage": "STDOUT"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "gen-table1",
+      "target": "join-data"
+    },
+    {
+      "source": "gen-table2",
+      "target": "join-data"
+    },
+    {
+      "source": "join-data",
+      "target": "print"
+    }
+  ]
+}

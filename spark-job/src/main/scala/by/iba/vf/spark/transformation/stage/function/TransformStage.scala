@@ -39,7 +39,9 @@ private[function] final class TransformStage(val id: String, selectStmt: String,
     }
 
     df.createOrReplaceTempView(tblName)
-    spark.sql(query)
+    val temp_df = spark.sql(query)
+    spark.sql(s"drop view $tblName")
+    temp_df
   }
 }
 

@@ -1,0 +1,50 @@
+{
+  "nodes": [
+    {
+      "id": "gen-table1",
+      "value": {
+        "operation": "READ",
+        "storage": "GENERATOR",
+        "alias": "left"
+      }
+    },
+    {
+      "id": "with-column",
+      "value": {
+        "operation": "WITH_COLUMN",
+        "column": "c",
+        "operationType": "useConditions",
+        "option.conditions": "a % 2 == 0: a * 2,b % 2 == 0: b * 4",
+        "option.otherwise": "0"
+      }
+    },
+    {
+      "id": "print1",
+      "value": {
+        "operation": "WRITE",
+        "storage": "STDOUT"
+      }
+    },
+    {
+      "id": "print2",
+      "value": {
+        "operation": "WRITE",
+        "storage": "STDOUT"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "gen-table1",
+      "target": "with-column"
+    },
+    {
+      "source": "gen-table1",
+      "target": "print1"
+    },
+    {
+      "source": "with-column",
+      "target": "print2"
+    }
+  ]
+}
