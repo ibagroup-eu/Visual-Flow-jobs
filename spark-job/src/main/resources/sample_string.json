@@ -1,0 +1,225 @@
+{
+  "nodes": [
+    {
+      "id": "read1",
+      "value": {
+        "operation": "READ",
+        "storage": "s3",
+        "endpoint": "",
+        "ssl": "false",
+        "accessKey": "",
+        "secretKey": "",
+        "bucket": "",
+        "path": "salaries.csv",
+        "format": "csv",
+        "option.header": "true",
+        "option.delimiter": ",",
+        "anonymousAccess": "false"
+      }
+    },
+    {
+      "id": "string1",
+      "value": {
+        "operation": "STRING",
+        "function": "upper",
+        "option.sourceColumn": "department",
+        "option.targetColumn": "department_up"
+
+      }
+    },
+    {
+      "id": "string2",
+      "value": {
+        "operation": "STRING",
+        "function": "repeat",
+        "option.sourceColumn": "salary",
+        "option.targetColumn": "salary_rep",
+        "option.repeatNumber": "2"
+      }
+    },
+    {
+      "id": "string3",
+      "value": {
+        "operation": "STRING",
+        "function": "concat_ws",
+        "option.sourceColumn": "department,salary",
+        "option.targetColumn": "department_salary",
+        "option.separator": "-"
+      }
+    },
+    {
+      "id": "string4",
+      "value": {
+        "operation": "STRING",
+        "function": "split",
+        "option.sourceColumn": "department_salary",
+        "option.targetColumn": "department_salary_split",
+        "option.regex": "-"
+      }
+    },
+    {
+      "id": "string5",
+      "value": {
+        "operation": "STRING",
+        "function": "format_string",
+        "option.sourceColumn": "department",
+        "option.targetColumn": "department_format",
+        "option.formatString": "???%s"
+      }
+    },
+    {
+      "id": "string6",
+      "value": {
+        "operation": "STRING",
+        "function": "trim",
+        "option.sourceColumn": "department_format",
+        "option.targetColumn": "department_trim",
+        "option.trimString": "?"
+      }
+    },
+    {
+      "id": "string8",
+      "value": {
+        "operation": "STRING",
+        "function": "encode",
+        "option.sourceColumn": "salary",
+        "option.targetColumn": "salary_encode",
+        "option.charset": "UTF-8"
+      }
+    },
+    {
+      "id": "string9",
+      "value": {
+        "operation": "STRING",
+        "function": "instr",
+        "option.sourceColumn": "department",
+        "option.targetColumn": "department_instr",
+        "option.substring": "a"
+      }
+    },
+    {
+      "id": "string10",
+      "value": {
+        "operation": "STRING",
+        "function": "locate",
+        "option.sourceColumn": "department",
+        "option.targetColumn": "department_locate",
+        "option.substring": "a",
+        "option.position": "3"
+      }
+    },
+    {
+      "id": "string11",
+      "value": {
+        "operation": "STRING",
+        "function": "lpad",
+        "option.sourceColumn": "department",
+        "option.targetColumn": "department_lpad",
+        "option.pad": "|",
+        "option.length": "15"
+      }
+    },
+    {
+      "id": "string12",
+      "value": {
+        "operation": "STRING",
+        "function": "regexp_extract",
+        "option.sourceColumn": "department",
+        "option.targetColumn": "department_reg",
+        "option.regex": "([A-Z].)",
+        "option.groupIndex": "1"
+      }
+    },
+    {
+      "id": "string13",
+      "value": {
+        "operation": "STRING",
+        "function": "substring",
+        "option.sourceColumn": "department",
+        "option.targetColumn": "department_s",
+        "option.position": "2",
+        "option.length": "3"
+      }
+    },
+    {
+      "id": "string14",
+      "value": {
+        "operation": "STRING",
+        "function": "substring_index",
+        "option.sourceColumn": "department",
+        "option.targetColumn": "department_si",
+        "option.delimiter": "a",
+        "option.count": "1"
+      }
+    },
+    {
+      "id": "print1",
+      "value": {
+        "operation": "WRITE",
+        "storage": "STDOUT"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "read1",
+      "target": "string1"
+    },
+    {
+      "source": "string1",
+      "target": "string2"
+    },
+    {
+      "source": "string2",
+      "target": "string3"
+    },
+    {
+      "source": "string3",
+      "target": "string4"
+    },
+    {
+      "source": "string4",
+      "target": "string5"
+    },
+    {
+      "source": "string5",
+      "target": "string6"
+    },
+    {
+      "source": "string6",
+      "target": "string8"
+    },
+    {
+      "source": "string8",
+      "target": "string9"
+    },
+    {
+      "source": "string9",
+      "target": "string10"
+    },
+    {
+      "source": "string10",
+      "target": "string11"
+    },
+    {
+      "source": "string11",
+      "target": "string12"
+    },
+    {
+      "source": "string12",
+      "target": "string13"
+    },
+    {
+      "source": "string13",
+      "target": "string14"
+    },
+    {
+      "source": "string14",
+      "target": "print1"
+    }
+  ]
+}
+
+
+
+

@@ -29,7 +29,7 @@ import by.iba.vf.spark.transformation.exception.TransformationConfigurationExcep
 private[function] final class JoinStage(
     val id: String,
     joinType: String,
-    columns: Option[String],
+    columnMap: Map[String, Option[String]],
     leftDataset: String,
     rightDataset: String
   ) extends Stage {
@@ -41,14 +41,36 @@ private[function] final class JoinStage(
     Some(join(input(leftDataset), input(rightDataset)))
   }
 
-  private def join(l: DataFrame, r: DataFrame): DataFrame = 
-    if (joinType == "cross") l.crossJoin(r)
-    else {
-      val columnsSeq = columns match {
-        case Some(str) => str.split(",").map(_.trim)
-        case None => throw new TransformationConfigurationException("columns field not found")
+  private def join(l: DataFrame, r: DataFrame): DataFrame =
+    joinType match {
+      case "cross" => l.crossJoin(r)
+      case _ =>
+        columnMap("columns") match {
+          case Some(columns) =>
+            val columnsSeq = columns.split(",").map(_.trim)
+            l.as("left").join(r.as("right"), columnsSeq, joinType)
+          case None =>
+            (columnMap("leftColumns"), columnMap("rightColumns")) match {
+              case (Some(leftColumns), Some(rightColumns)) =>
+                val leftColumnsSeq = leftColumns.split(",").map(_.trim)
+                val rightColumnsSeq = rightColumns.split(",").map(_.trim)
+
+                if (leftColumnsSeq.length != rightColumnsSeq.length)
+                  throw new TransformationConfigurationException("Not equal number of columns")
+
+                var columns = l(leftColumnsSeq(0)) === r(rightColumnsSeq(0))
+                for ((left, right) <- leftColumnsSeq.drop(1) zip rightColumnsSeq.drop(1))
+                  columns = columns && l(left) === r(right)
+
+                l.as("left").join(r.as("right"), columns, joinType)
+              case (Some(_), None) =>
+                throw new TransformationConfigurationException("rightColumns field not found")
+              case (None, Some(_)) =>
+                throw new TransformationConfigurationException("leftColumns field not found")
+              case (None, None) =>
+                throw new TransformationConfigurationException("Column fields not found")
+        }
       }
-      l.as("left").join(r.as("right"), columnsSeq, joinType)
     }
 }
 
@@ -56,22 +78,28 @@ object JoinStageBuilder extends StageBuilder {
 
   private val FieldJoinType = "joinType"
   private val FieldColumns = "columns"
+  private val FieldLeftColumns = "leftColumns"
+  private val FieldRightColumns = "rightColumns"
   private val FieldLeftDataset = "leftDataset"
   private val FieldRightDataset = "rightDataset"
 
   override protected def validate(config: Map[String, String]): Boolean =
-    (config.get(fieldOperation).contains(OperationType.JOIN.toString) && config.contains(FieldJoinType) && config
-      .contains(FieldColumns) && config.contains(FieldLeftDataset) && config.contains(FieldRightDataset)) ||
-    (config.get(fieldOperation).contains(OperationType.JOIN.toString) && config.contains(FieldJoinType) &&
-      config.contains(FieldLeftDataset) && config.contains(FieldRightDataset))
+    (config.get(fieldOperation).contains(OperationType.JOIN.toString) && config.contains(FieldJoinType) && (config
+      .contains(FieldColumns) || (config.contains(FieldLeftColumns) && config.contains(FieldRightColumns))) &&
+      config.contains(FieldLeftDataset) && config.contains(FieldRightDataset)) ||
+      (config.get(fieldOperation).contains(OperationType.JOIN.toString) && config.contains(FieldJoinType) &&
+        config.contains(FieldLeftDataset) && config.contains(FieldRightDataset))
 
   override protected def convert(config: Node): Stage = {
     val id = config.id
     val joinType = config.value(FieldJoinType)
     val leftDataset = config.value(FieldLeftDataset)
     val rightDataset = config.value(FieldRightDataset)
-    val fields = config.value.get(FieldColumns)
+    val columns = config.value.get(FieldColumns)
+    val leftColumns = config.value.get(FieldLeftColumns)
+    val rightColumns = config.value.get(FieldRightColumns)
 
-    new JoinStage(id, joinType, fields, leftDataset, rightDataset)
+    val columnMap = Map("columns" -> columns, "leftColumns" -> leftColumns, "rightColumns" -> rightColumns)
+    new JoinStage(id, joinType, columnMap, leftDataset, rightDataset)
   }
 }

@@ -92,5 +92,5 @@ trait WriteStageBuilder extends StageBuilder with StorageValidator {
 }
 
 object OperationType extends Enumeration {
-  val READ, WRITE, JOIN, UNION, GROUP, FILTER, TRANSFORM, SORT, CACHE, CDC, REMOVE_DUPLICATES, SLICE = Value
+  val READ, WRITE, JOIN, UNION, GROUP, FILTER, TRANSFORM, SORT, CACHE, CDC, REMOVE_DUPLICATES, SLICE, STRING, VALIDATE, WITH_COLUMN, DATETIME, HANDLE_NULL, PIVOT = Value
 }

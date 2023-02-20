@@ -46,5 +46,8 @@ exec /opt/spark/bin/spark-submit \
   --conf spark.driver.port=14536 \
   --conf spark.kubernetes.executor.label.jobId="$JOB_ID" \
   --conf spark.kubernetes.executor.label.pipelineJobId="$PIPELINE_JOB_ID" \
+  --conf spark.kubernetes.executor.volumes.persistentVolumeClaim."$PVC_NAME".mount.path="$MOUNT_PATH" \
+  --conf spark.kubernetes.executor.volumes.persistentVolumeClaim."$PVC_NAME".mount.readOnly=false \
+  --conf spark.kubernetes.executor.volumes.persistentVolumeClaim."$PVC_NAME".options.claimName="$PVC_NAME" \
   "$JOB_JAR" \
   -Dlog4j2.configurationFile=/opt/spark/conf/log4j.properties

@@ -33,6 +33,8 @@
         <cve>CVE-2020-10673</cve>
         <cve>CVE-2017-7525</cve>
         <cve>CVE-2017-16613</cve>
+        <cve>CVE-2022-25168</cve>
+        <cve>CVE-2022-26612</cve>
     </suppress>
 </suppressions>
 

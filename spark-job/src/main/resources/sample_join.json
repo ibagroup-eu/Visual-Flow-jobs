@@ -1,28 +1,44 @@
 {
   "nodes": [
     {
-      "id": "gen-table1",
+      "id": "left-table",
       "value": {
         "operation": "READ",
-        "storage": "GENERATOR",
-        "alias": "left"
+        "storage": "s3",
+        "endpoint": "",
+        "ssl": "false",
+        "accessKey": "",
+        "secretKey": "",
+        "bucket": "",
+        "path": "left_df.avro",
+        "format": "avro",
+        "anonymousAccess": "false"
       }
     },
     {
-      "id": "gen-table2",
+      "id": "right-table",
       "value": {
         "operation": "READ",
-        "storage": "GENERATOR",
-        "alias": "right"
+        "storage": "s3",
+        "endpoint": "",
+        "ssl": "false",
+        "accessKey": "",
+        "secretKey": "",
+        "bucket": "",
+        "path": "right_df.avro",
+        "format": "avro",
+        "anonymousAccess": "false"
       }
     },
     {
       "id": "join-data",
       "value": {
         "operation": "JOIN",
-        "joinType": "cross",
-        "leftDataset": "gen-table1",
-        "rightDataset": "gen-table2"
+        "joinType": "left",
+        "leftDataset": "left-table",
+        "rightDataset": "right-table",
+        "leftColumns": "emp_dept_id",
+        "rightColumns": "dept_id"
       }
     },
     {
@@ -35,11 +51,11 @@
   ],
   "edges": [
     {
-      "source": "gen-table1",
+      "source": "left-table",
       "target": "join-data"
     },
     {
-      "source": "gen-table2",
+      "source": "right-table",
       "target": "join-data"
     },
     {

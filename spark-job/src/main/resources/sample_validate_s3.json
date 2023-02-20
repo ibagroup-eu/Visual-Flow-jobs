@@ -1,0 +1,46 @@
+{
+  "nodes": [
+    {
+      "id": "read1",
+      "value": {
+        "operation": "READ",
+        "storage": "s3",
+        "endpoint": "",
+        "ssl": "false",
+        "accessKey": "",
+        "secretKey": "",
+        "bucket": "",
+        "path": "salaries.csv",
+        "format": "csv",
+        "option.header": "true",
+        "option.delimiter": ",",
+        "anonymousAccess": "false"
+      }
+    },
+    {
+      "id": "validate1",
+      "value": {
+        "operation": "VALIDATE",
+        "validateConfig": "[{\"column\":\"salary\",\"validations\":\"[{\\\"type\\\":\\\"dataType\\\",\\\"dataType\\\":\\\"integer\\\"},{\\\"type\\\":\\\"minValue\\\",\\\"minValue\\\":\\\"2000\\\"},{\\\"type\\\":\\\"maxValue\\\",\\\"maxValue\\\":\\\"4600\\\"}]\"},{\"column\":\"department\",\"validations\":\"[{\\\"type\\\":\\\"dataType\\\",\\\"dataType\\\":\\\"string\\\"},{\\\"type\\\":\\\"minLength\\\",\\\"minLength\\\":\\\"5\\\"},{\\\"type\\\":\\\"maxLength\\\",\\\"maxLength\\\":\\\"10\\\"},{\\\"type\\\":\\\"notNull\\\"},{\\\"type\\\":\\\"inValues\\\",\\\"inValues\\\":\\\"Sales,Finance,Marketing\\\"},{\\\"type\\\":\\\"regex\\\",\\\"regex\\\":\\\"[A-Z].*\\\"}]\"},{\"column\":\"employee_name,department,salary\",\"validations\":\"[{\\\"type\\\":\\\"uniqueness\\\"}]\"}]"
+      }
+    },
+    {
+      "id": "print1",
+      "value": {
+        "operation": "WRITE",
+        "storage": "STDOUT"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "read1",
+      "target": "validate1"
+    },
+    {
+      "source": "validate1",
+      "target": "print1"
+    }
+  ]
+}
+

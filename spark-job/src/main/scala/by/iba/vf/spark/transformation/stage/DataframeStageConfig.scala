@@ -19,22 +19,27 @@
 package by.iba.vf.spark.transformation.stage
 
 import by.iba.vf.spark.transformation.config.Node
-import by.iba.vf.spark.transformation.stage.ClusterStageConfig._
+import by.iba.vf.spark.transformation.stage.DataframeStageConfig.{dataFieldName, schemaFieldName}
+import net.liftweb.json
 
-object ClusterStageConfig {
-  val storageId = "cluster"
+object DataframeStageConfig {
+  val storageId = "dataframe"
 
-  val pathFieldName = "path"
-  val formatFieldName = "format"
-
-  val useSchemaFieldName = "useSchema"
-  val partitionByFieldName = "partitionBy"
+  val dataFieldName = "data"
+  val schemaFieldName = "schema"
 }
 
-class ClusterStageConfig(config: Node) {
-  val path: String = config.value(pathFieldName)
-  val format: String = config.value(formatFieldName)
+class DataframeStageConfig(config: Node) {
+  private implicit val Formats: json.DefaultFormats.type = json.DefaultFormats
 
-  val useSchema: Boolean = config.value.get(useSchemaFieldName).exists(x => x.toBoolean)
-  val partitionBy: Option[Array[String]] = config.value.get(partitionByFieldName).map(x => x.split(',').map(c => c.trim))
+  val data: String = config.value(dataFieldName)
+  val schema: String = config.value(schemaFieldName)
+
+  def parseData(): List[List[String]] = {
+    json.parse(data).extract[List[List[String]]]
+  }
+
+  def parseSchema(): List[Map[String, String]] = {
+    json.parse(schema).extract[List[Map[String, String]]]
+  }
 }

@@ -73,6 +73,10 @@ private[function] final class WithColumnStage(val id: String, column: String,
       expression += " OVER ("
       if (winFuncOptions.contains("partitionBy"))
         expression += s" PARTITION BY ${winFuncOptions("partitionBy").split(",").mkString(", ")}"
+      if (winFuncOptions.contains("orderBy"))
+        expression += s" ORDER BY ${winFuncOptions("orderBy").split(",")
+                                                             .map(e => e.split(":").mkString(" "))
+                                                             .mkString(", ")}"
       expression += ")"
     } else {
       expression = windowFunction match {
@@ -95,6 +99,32 @@ private[function] final class WithColumnStage(val id: String, column: String,
     df.withColumn(column, expr(expression))
   }
 
+  def replaceValues(df: DataFrame, valueOptions: Map[String, String]): DataFrame = {
+    val expression = s"regexp_replace($column, ${valueOptions("oldValue")}, ${valueOptions("newValue")})"
+      .replace("\\", "\\"*3)
+    df.withColumn(column, expr(expression))
+  }
+
+  def replaceValuesUsingConditions(df: DataFrame, conditionOptions: Map[String, String]): DataFrame = {
+    val conditions = conditionOptions("conditions").split(",")
+    var expression = "CASE"
+    for (i <- conditions.indices) {
+      val condition = conditions(i).split(":")
+      expression += s" WHEN ${condition(0)} THEN regexp_replace($column, ${condition(1).split(";")
+        .mkString(", ")})"
+        .replace("\\", "\\"*3)
+    }
+    if (conditionOptions.contains("otherwise"))
+      expression += s" ELSE ${conditionOptions("otherwise")}"
+    expression += " END"
+    df.withColumn(column, expr(expression))
+  }
+
+  def replaceValuesCharByChar(df: DataFrame, charOptions: Map[String, String]): DataFrame = {
+    val expression = s"translate($column, ${charOptions("oldChars")}, ${charOptions("newChars")})"
+    df.withColumn(column, expr(expression))
+  }
+
   def useWithColumn(df: DataFrame): DataFrame = {
     operationType match {
       case "deriveColumn" => deriveColumn(df, options("expression"))
@@ -103,6 +133,9 @@ private[function] final class WithColumnStage(val id: String, column: String,
       case "renameColumn" => renameColumn(df, options("columnName"))
       case "useConditions" => useConditions(df, options)
       case "useWindowFunction" => useWindowFunction(df, options)
+      case "replaceValues" => replaceValues(df, options)
+      case "replaceValuesUsingConditions" => replaceValuesUsingConditions(df, options)
+      case "replaceValuesCharByChar" => replaceValuesCharByChar(df, options)
       case _ =>
        throw new TransformationConfigurationException(s"Operation $operationType does not exist")
     }

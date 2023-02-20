@@ -1,0 +1,53 @@
+{
+  "nodes": [
+    {
+      "id": "table1",
+      "value": {
+        "operation": "READ",
+        "storage": "clickhouse",
+        "host": "localhost",
+        "port": "8123",
+        "database": "default",
+        "user": "",
+        "password": "",
+        "customSql": "false",
+        "query": "SELECT * FROM default.visits3"
+      }
+    },
+    {
+      "id": "table2",
+      "value": {
+        "operation": "WRITE",
+        "storage": "clickhouse",
+        "host": "localhost",
+        "port": "8123",
+        "database": "default",
+        "user": "",
+        "password": "",
+        "writeMode": "overwrite",
+        "schema": "default",
+        "table": "visits4",
+        "engine": "Log"
+      }
+    },
+    {
+      "id": "table3",
+      "value": {
+        "operation": "WRITE",
+        "name": "writeConsole",
+        "storage": "stdout",
+        "quantity": "10"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "table1",
+      "target": "table3"
+    },
+    {
+      "source": "table1",
+      "target": "table2"
+    }
+  ]
+}

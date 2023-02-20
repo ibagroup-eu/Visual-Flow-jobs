@@ -25,14 +25,16 @@ import by.iba.vf.spark.transformation.exception.NodeNotFoundException
 import by.iba.vf.spark.transformation.exception.UnknownStageException
 import by.iba.vf.spark.transformation.stage.Stage
 import by.iba.vf.spark.transformation.stage.StageBuilder
-import by.iba.vf.spark.transformation.stage.function.{CacheStageBuilder, ChangeDataCaptureStageBuilder, FilterStageBuilder, GroupByStageBuilder, JoinStageBuilder, RemoveDuplicatesStageBuilder, SliceStageBuilder, SortStageBuilder, TransformStageBuilder, UnionStageBuilder}
-import by.iba.vf.spark.transformation.stage.read.{CassandraReadStageBuilder, DataGeneratorStageBuilder, ElasticReadStageBuilder, JdbcReadStageBuilder, MongoReadStageBuilder, ObjectStorageReadCOSStageBuilder, ObjectStorageReadS3StageBuilder, RedisReadStageBuilder, RedshiftReadStageBuilder}
-import by.iba.vf.spark.transformation.stage.write.{CassandraWriteStageBuilder, ElasticWriteStageBuilder, JdbcWriteStageBuilder, MongoWriteStageBuilder, ObjectStorageWriteCOSStageBuilder, ObjectStorageWriteS3StageBuilder, RedisWriteStageBuilder, RedshiftWriteStageBuilder, StdoutWriteStageBuilder}
+import by.iba.vf.spark.transformation.stage.function.{CacheStageBuilder, ChangeDataCaptureStageBuilder, DateTimeStageBuilder, FilterStageBuilder, GroupByStageBuilder, HandleNullStageBuilder, JoinStageBuilder, PivotStageBuilder, RemoveDuplicatesStageBuilder, SliceStageBuilder, SortStageBuilder, StringStageBuilder, TransformStageBuilder, UnionStageBuilder, ValidateStageBuilder, WithColumnStageBuilder}
+import by.iba.vf.spark.transformation.stage.read.{CassandraReadStageBuilder, ClickhouseReadStageBuilder, ClusterReadStageBuilder, DataGeneratorStageBuilder, DataframeReadStageBuilder, ElasticReadStageBuilder, JdbcReadStageBuilder, MongoReadStageBuilder, ObjectStorageReadCOSStageBuilder, ObjectStorageReadS3StageBuilder, RedisReadStageBuilder, RedshiftReadStageBuilder}
+import by.iba.vf.spark.transformation.stage.write.{CassandraWriteStageBuilder, ClickhouseWriteStageBuilder, ClusterWriteStageBuilder, ElasticWriteStageBuilder, JdbcWriteStageBuilder, MongoWriteStageBuilder, ObjectStorageWriteCOSStageBuilder, ObjectStorageWriteS3StageBuilder, RedisWriteStageBuilder, RedshiftWriteStageBuilder, StdoutWriteStageBuilder}
 
 object ExecutionPlanBuilder {
 
   private val StageBuilders: Seq[StageBuilder] =
     Seq(
+      ClusterReadStageBuilder,
+      ClusterWriteStageBuilder,
       DataGeneratorStageBuilder,
       CacheStageBuilder,
       RedisReadStageBuilder,
@@ -60,7 +62,17 @@ object ExecutionPlanBuilder {
       ChangeDataCaptureStageBuilder,
       RemoveDuplicatesStageBuilder,
       SortStageBuilder,
-      SliceStageBuilder
+      SliceStageBuilder,
+      StringStageBuilder,
+      ValidateStageBuilder,
+      DataframeReadStageBuilder,
+      WithColumnStageBuilder,
+      DataframeReadStageBuilder,
+      DateTimeStageBuilder,
+      ClickhouseReadStageBuilder,
+      ClickhouseWriteStageBuilder,
+      PivotStageBuilder,
+      HandleNullStageBuilder
     )
 
   def buildExecutionPlan(pc: ProcessConfiguration): ExecutionPlan = {

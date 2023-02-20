@@ -19,7 +19,7 @@
 package by.iba.vf.spark.transformation.stage.write
 
 import by.iba.vf.spark.transformation.config.Node
-import by.iba.vf.spark.transformation.stage.ClusterStageConfig.{formatFieldName, pathFieldName, writeModeFieldName}
+import by.iba.vf.spark.transformation.stage.ClusterStageConfig.{formatFieldName, pathFieldName}
 import by.iba.vf.spark.transformation.stage.{ClusterStageConfig, Stage, StageBuilder, WriteStageBuilder}
 import org.apache.spark.sql.{DataFrame, DataFrameWriter, Row, SparkSession}
 import org.zeroturnaround.zip.ZipUtil
@@ -32,7 +32,7 @@ class ClusterWriteStage(override val id: String, var options: Map[String, String
     if (config.format == "avro" && !config.useSchema)
       options = options.filter(elem => elem._1 != "avroSchema")
 
-    addPartitions(getDfWriter(df, config.writeMode).options(options)).format(config.format).save(s"/files/${config.path}")
+    addPartitions(getDfWriter(df, Option("overwrite")).options(options)).format(config.format).save(s"/files/${config.path}")
     ZipUtil.pack(new File(s"/files/${config.path}"), new File(s"/files/${config.path}.zip"));
   }
 

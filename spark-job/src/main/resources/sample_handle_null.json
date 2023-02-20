@@ -9,13 +9,13 @@
       }
     },
     {
-      "id": "with-column",
+      "id": "handle-null",
       "value": {
-        "operation": "WITH_COLUMN",
-        "column": "a",
-        "operationType": "replaceValuesUsingConditions",
-        "option.conditions": "a == 3: '\\d+'; b, b == 1: a; b * 3",
-        "option.otherwise": "a"
+        "operation": "HANDLE_NULL",
+        "mode": "fill",
+        "option.fillValueType": "agg",
+        "option.fillColumns": "b",
+        "option.fillStrategy": "mean"
       }
     },
     {
@@ -36,14 +36,14 @@
   "edges": [
     {
       "source": "gen-table1",
-      "target": "with-column"
+      "target": "handle-null"
     },
     {
       "source": "gen-table1",
       "target": "print1"
     },
     {
-      "source": "with-column",
+      "source": "handle-null",
       "target": "print2"
     }
   ]

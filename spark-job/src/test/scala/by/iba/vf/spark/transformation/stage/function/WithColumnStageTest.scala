@@ -39,7 +39,10 @@ class WithColumnStageTest extends AnyFunSpec with MockitoSugar with PrivateMetho
       "string",
       "a3",
       "CASE WHEN a % 2 == 0 THEN a * 2 END",
-      "count(*) OVER (PARTITION BY department)"
+      "count(*) OVER (PARTITION BY department)",
+      "regexp_replace(a2, 1, 5)",
+      "CASE WHEN a2 == 3 THEN regexp_replace(a2, a2, b) ELSE a2 END",
+      "translate(a2, 'abc', 'cdb')"
     )
 
     val operationVector = Vector(
@@ -48,7 +51,10 @@ class WithColumnStageTest extends AnyFunSpec with MockitoSugar with PrivateMetho
       "changeType",
       "renameColumn",
       "useConditions",
-      "useWindowFunction"
+      "useWindowFunction",
+      "replaceValues",
+      "replaceValuesUsingConditions",
+      "replaceValuesCharByChar"
     )
     val mapVector = Vector(
       Map("expression" -> "a * 2"),
@@ -56,11 +62,15 @@ class WithColumnStageTest extends AnyFunSpec with MockitoSugar with PrivateMetho
       Map("columnType" -> "string"),
       Map("columnName" -> "a3"),
       Map("conditions" -> "a % 2 == 0: a * 2"),
-      Map("windowFunction" -> "count", "partitionBy" -> "department", "column" -> "*")
+      Map("windowFunction" -> "count", "partitionBy" -> "department", "column" -> "*"),
+      Map("oldValue" -> "1", "newValue" -> "5"),
+      Map("conditions" -> "a2 == 3: a2; b", "otherwise" -> "a2"),
+      Map("oldChars" -> "'abc'", "newChars" -> "'cdb'")
     )
 
     for (i <- operationVector.indices) {
-      if (Seq("deriveColumn", "useConditions", "useWindowFunction").contains(operationVector(i)))
+      if (Seq("deriveColumn", "useConditions", "useWindowFunction", "replaceValues",
+        "replaceValuesUsingConditions", "replaceValuesCharByChar").contains(operationVector(i)))
         when(df.withColumn("a2", expr(funcVector(i)))).thenReturn(df2)
       else if (operationVector(i) == "addConstant")
         when(df.withColumn("a2", lit(funcVector(i)))).thenReturn(df2)
@@ -84,11 +94,15 @@ class WithColumnStageTest extends AnyFunSpec with MockitoSugar with PrivateMetho
       "string",
       "a3",
       "CASE WHEN a % 2 == 0 THEN a * 2 END",
-      "count(*) OVER (PARTITION BY department)"
+      "count(*) OVER (PARTITION BY department)",
+      "regexp_replace(a2, 1, 5)",
+      "CASE WHEN a2 == 3 THEN regexp_replace(a2, a2, b) ELSE a2 END",
+      "translate(a2, 'abc', 'cdb')"
     )
 
     val operationVector = Vector(
-      "deriveColumn", "addConstant", "changeType", "renameColumn", "useConditions", "useWindowFunction"
+      "deriveColumn", "addConstant", "changeType", "renameColumn", "useConditions",
+      "useWindowFunction", "replaceValues", "replaceValuesUsingConditions", "replaceValuesCharByChar"
     )
     val mapVector = Vector(
       Map("expression" -> "a * 2"),
@@ -96,11 +110,15 @@ class WithColumnStageTest extends AnyFunSpec with MockitoSugar with PrivateMetho
       Map("columnType" -> "string"),
       Map("columnName" -> "a3"),
       Map("conditions" -> "a % 2 == 0: a * 2"),
-      Map("windowFunction" -> "count", "partitionBy" -> "department", "column" -> "*")
+      Map("windowFunction" -> "count", "partitionBy" -> "department", "column" -> "*"),
+      Map("oldValue" -> "1", "newValue" -> "5"),
+      Map("conditions" -> "a2 == 3: a2; b", "otherwise" -> "a2"),
+      Map("oldChars" -> "'abc'", "newChars" -> "'cdb'")
     )
 
     for (i <- operationVector.indices) {
-      if (Seq("deriveColumn", "useConditions", "useWindowFunction").contains(operationVector(i)))
+      if (Seq("deriveColumn", "useConditions", "useWindowFunction", "replaceValues",
+        "replaceValuesUsingConditions", "replaceValuesCharByChar").contains(operationVector(i)))
         when(df.withColumn("a2", expr(funcVector(i)))).thenReturn(df2)
       else if (operationVector(i) == "addConstant")
         when(df.withColumn("a2", lit(funcVector(i)))).thenReturn(df2)
@@ -115,7 +133,10 @@ class WithColumnStageTest extends AnyFunSpec with MockitoSugar with PrivateMetho
         stage.changeType(df, "string"),
         stage.renameColumn(df, "a3"),
         stage.useConditions(df, Map("conditions" -> "a % 2 == 0: a * 2")),
-        stage.useWindowFunction(df, Map("windowFunction" -> "count", "partitionBy" -> "department", "column" -> "*"))
+        stage.useWindowFunction(df, Map("windowFunction" -> "count", "partitionBy" -> "department", "column" -> "*")),
+        stage.replaceValues(df, Map("oldValue" -> "1", "newValue" -> "5")),
+        stage.replaceValuesUsingConditions(df, Map("conditions" -> "a2 == 3: a2; b", "otherwise" -> "a2")),
+        stage.replaceValuesCharByChar(df, Map("oldChars" -> "'abc'", "newChars" -> "'cdb'"))
       )
       val result = stageVector(i)
       result should be(df2)
@@ -138,7 +159,13 @@ class WithColumnStageBuilderTest extends AnyFunSpec with PrivateMethodTester {
         "operationType" -> "useConditions", "option.conditions" -> "a % 2 == 0: a * 2"),
       Map("operation" -> OperationType.WITH_COLUMN.toString, "column" -> "a2",
         "operationType" -> "useWindowFunction", "option.windowFunction" -> "count",
-        "option.partitionBy" -> "department", "option.column" -> "*")
+        "option.partitionBy" -> "department", "option.column" -> "*"),
+      Map("operation" -> OperationType.WITH_COLUMN.toString, "operationType" -> "replaceValues",
+        "column" -> "a2", "option.oldValue" -> "1", "option.newValue" -> "5"),
+      Map("operation" -> OperationType.WITH_COLUMN.toString, "operationType" -> "replaceValuesUsingConditions",
+        "column" -> "a2", "option.conditions" -> "a2 == 3: a2; b", "option.otherwise" -> "a2"),
+      Map("operation" -> OperationType.WITH_COLUMN.toString, "operationType" -> "replaceValuesCharByChar",
+        "column" -> "a2", "oldChars" -> "'abc'", "newChars" -> "'cdb'")
     )
 
     for (i <- configVector.indices) {
@@ -161,7 +188,13 @@ class WithColumnStageBuilderTest extends AnyFunSpec with PrivateMethodTester {
         "operationType" -> "useConditions", "option.conditions" -> "a % 2 == 0: a * 2"),
       Map("operation" -> OperationType.WITH_COLUMN.toString, "column" -> "a2",
         "operationType" -> "useWindowFunction", "option.windowFunction" -> "count",
-        "option.partitionBy" -> "department", "option.column" -> "*")
+        "option.partitionBy" -> "department", "option.column" -> "*"),
+      Map("operation" -> OperationType.WITH_COLUMN.toString, "operationType" -> "replaceValues",
+        "column" -> "a2", "option.oldValue" -> "1", "option.newValue" -> "5"),
+      Map("operation" -> OperationType.WITH_COLUMN.toString, "operationType" -> "replaceValuesUsingConditions",
+        "column" -> "a2", "option.conditions" -> "a2 == 3: a2; b", "option.otherwise" -> "a2"),
+      Map("operation" -> OperationType.WITH_COLUMN.toString, "operationType" -> "replaceValuesCharByChar",
+        "column" -> "a2", "oldChars" -> "'abc'", "newChars" -> "'cdb'")
     )
 
     for (i <- configVector.indices) {

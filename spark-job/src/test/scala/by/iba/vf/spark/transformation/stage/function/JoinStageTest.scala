@@ -32,7 +32,7 @@ import by.iba.vf.spark.transformation.exception.TransformationConfigurationExcep
 class JoinStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodTester {
   it("process") {
     implicit lazy val spark: SparkSession = mock[SparkSession]
-    val fields = Option("test1")
+    val columnMap = Map("leftColumns" -> None, "rightColumns" -> None, "columns" -> Option("test1"))
     val joinType = "inner"
     val df = mock[DataFrame]
     val df2 = mock[DataFrame]
@@ -41,14 +41,15 @@ class JoinStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodTeste
     when(df2.as("right")).thenReturn(df2)
     if (joinType == "cross") when(df.crossJoin(df2)).thenReturn(df3)
     else {
-      val fieldsSeq = fields match {
-        case Some(str) => str.split(",").map(_.trim)
+      val fieldsSeq = columnMap("columns") match {
+        case Some(str) =>
+          str.split(",").map(_.trim)
         case None => throw new TransformationConfigurationException("columns field not found")
       }
       when(df.join(df2, fieldsSeq, joinType)).thenReturn(df3)
     }
     
-    val stage = new JoinStage("id", joinType, fields, "1", "2")
+    val stage = new JoinStage("id", joinType, columnMap, "1", "2")
 
     val result = stage invokePrivate PrivateMethod[Option[DataFrame]]('process)(Map("1" -> df, "2" -> df2), spark)
 
@@ -56,7 +57,7 @@ class JoinStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodTeste
   }
 
   it("join") {
-    val fields = Option("test1")
+    val columnMap = Map("leftColumns" -> None, "rightColumns" -> None, "columns" -> Option("test1"))
     val joinType = "inner"
     val df = mock[DataFrame]
     val df2 = mock[DataFrame]
@@ -65,14 +66,16 @@ class JoinStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodTeste
     when(df2.as("right")).thenReturn(df2)
     if (joinType == "cross") when(df.crossJoin(df2)).thenReturn(df3)
     else {
-      val fieldsSeq = fields match {
-        case Some(str) => str.split(",").map(_.trim)
+      val fieldsSeq = columnMap("columns") match {
+        case Some(str) =>
+          str.split(",").map(_.trim)
         case None => throw new TransformationConfigurationException("columns field not found")
       }
       when(df.join(df2, fieldsSeq, joinType)).thenReturn(df3)
+
     }
 
-    val stage = new JoinStage("id", joinType, fields, "1", "2")
+    val stage = new JoinStage("id", joinType, columnMap, "1", "2")
 
     val result = stage invokePrivate PrivateMethod[DataFrame]('join)(df, df2)
 
@@ -86,7 +89,7 @@ class JoinStageBuilderTest extends AnyFunSpec with PrivateMethodTester {
       Map(
         "operation" -> OperationType.JOIN.toString,
         "joinType" -> "inner",
-        "columns" -> "test",
+        "columns" -> "test1",
         "leftDataset" -> "1",
         "rightDataset" -> "2"
       )
@@ -102,7 +105,7 @@ class JoinStageBuilderTest extends AnyFunSpec with PrivateMethodTester {
         Map(
           "operation" -> OperationType.JOIN.toString,
           "joinType" -> "inner",
-          "columns" -> "test",
+          "columns" -> "test1",
           "leftDataset" -> "1",
           "rightDataset" -> "2"
         )

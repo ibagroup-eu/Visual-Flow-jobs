@@ -1,0 +1,50 @@
+{
+  "nodes": [
+    {
+      "id": "table1",
+      "value": {
+        "operation": "READ",
+        "storage": "dataframe",
+        "data": "[[\"0\",\"Ulad\"],[\"1\",\"Roman\"]]",
+        "schema": "[{\"column\":\"id\",\"type\":\"String\"},{\"column\":\"name\",\"type\":\"String\"}]"
+      }
+    },
+    {
+      "id": "table2",
+      "value": {
+        "operation": "READ",
+        "storage": "dataframe",
+        "data": "[[\"0\",\"Ulad1\"],[\"1\",\"Roman1\"]]",
+        "schema": "[{\"column\":\"id\",\"type\":\"String\"},{\"column\":\"name\",\"type\":\"String\"}]"
+      }
+    },
+    {
+      "id": "table3",
+      "value": {
+        "operation": "WRITE",
+        "name": "writeConsole",
+        "storage": "stdout",
+        "quantity": "10"
+      }
+    },
+    {
+      "id": "table4",
+      "value": {
+        "operation": "WRITE",
+        "name": "writeConsole",
+        "storage": "stdout",
+        "quantity": "10"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "table1",
+      "target": "table3"
+    },
+    {
+      "source": "table2",
+      "target": "table4"
+    }
+  ]
+}

@@ -10,7 +10,7 @@
         "accessKey": "",
         "secretKey": "",
         "bucket": "",
-        "path": "salaries.csv",
+        "path": "products_pivot.csv",
         "format": "csv",
         "option.header": "true",
         "option.delimiter": ",",
@@ -18,13 +18,13 @@
       }
     },
     {
-      "id": "with-column",
+      "id": "pivot",
       "value": {
-        "operation": "WITH_COLUMN",
-        "column": "department",
-        "operationType": "replaceValuesCharByChar",
-        "option.oldChars": "'Sel'",
-        "option.newChars": "325"
+        "operation": "PIVOT",
+        "operationType": "unpivot",
+        "option.unchangedColumns": "Product",
+        "option.unpivotColumns": "Canada,China,Mexico,USA",
+        "option.unpivotNames": "Country,Amount"
       }
     },
     {
@@ -45,14 +45,14 @@
   "edges": [
     {
       "source": "read1",
-      "target": "with-column"
+      "target": "pivot"
     },
     {
       "source": "read1",
       "target": "print1"
     },
     {
-      "source": "with-column",
+      "source": "pivot",
       "target": "print2"
     }
   ]

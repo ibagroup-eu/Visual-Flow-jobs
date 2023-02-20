@@ -1,0 +1,37 @@
+{
+  "nodes": [
+    {
+      "id": "gen-table1",
+      "value": {
+        "operation": "READ",
+        "storage": "GENERATOR",
+        "alias": "left"
+      }
+    },
+    {
+      "id": "validate1",
+      "value": {
+        "operation": "VALIDATE",
+        "validateConfig": "[{\"column\": \"a\",\"validations\":\"[{\\\"type\\\":\\\"dataType\\\",\\\"dataType\\\":\\\"integer\\\"},{\\\"type\\\": \\\"minValue\\\",\\\"minValue\\\":\\\"1\\\"},{\\\"type\\\":\\\"maxValue\\\",\\\"maxValue\\\":\\\"3\\\"},{\\\"type\\\":\\\"inValues\\\",\\\"inValues\\\":\\\"1,2,3\\\"}]\"}]"
+      }
+    },
+    {
+      "id": "print1",
+      "value": {
+        "operation": "WRITE",
+        "storage": "STDOUT"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "gen-table1",
+      "target": "validate1"
+    },
+    {
+      "source": "validate1",
+      "target": "print1"
+    }
+  ]
+}
+

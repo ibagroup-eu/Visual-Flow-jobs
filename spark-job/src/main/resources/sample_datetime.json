@@ -1,0 +1,46 @@
+{
+  "nodes":[
+    {
+      "id":"s3",
+      "value": {
+        "operation": "READ",
+        "storage": "s3",
+        "endpoint": "",
+        "ssl": "false",
+        "accessKey": "",
+        "secretKey": "",
+        "bucket": "",
+        "path": "1987_short.csv",
+        "format": "csv",
+        "option.header": "true",
+        "option.delimiter": ",",
+        "anonymousAccess": "false"
+      }
+    },
+    {
+      "id": "current",
+      "value": {
+        "operation": "DATETIME",
+        "function": "current_date",
+        "option.targetColumn": "current"
+      }
+    },
+    {
+      "id": "print1",
+      "value": {
+        "operation": "WRITE",
+        "storage": "STDOUT"
+      }
+    }
+  ],
+  "edges":[
+    {
+      "source": "s3",
+      "target": "current"
+    },
+    {
+      "source": "current",
+      "target": "print1"
+    }
+  ]
+}
