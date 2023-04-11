@@ -56,7 +56,7 @@ For more information on stages check [stage_fields.md](./stage_fields.md)
 
 ## Contribution
 
-[Check the official guide](https://github.com/ibagomel/Visual-Flow/blob/main/CONTRIBUTING.md)
+[Check the official guide](https://github.com/ibagroup-eu/Visual-Flow/blob/main/CONTRIBUTING.md)
 
 ## License
 
