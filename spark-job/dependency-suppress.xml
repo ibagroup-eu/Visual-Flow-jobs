@@ -22,6 +22,11 @@
         This suppresses specific CVEs for the entire project. This is a temporary solution. After the migration to Spark 3.x will be done, the remaining vulnerabilities would have to be fixed.
         ]]></notes>
         <cve>CVE-2022-33891</cve>
+        <cve>CVE-2021-25642</cve>
+        <cve>CVE-2021-33036</cve>
+        <cve>CVE-2021-37404</cve>
+        <cve>CVE-2020-36632</cve>
+        <cve>CVE-2020-10650</cve>
         <cve>CVE-2020-9480</cve>
         <cve>CVE-2008-1997</cve>
         <cve>CVE-2018-17190</cve>
@@ -35,6 +40,7 @@
         <cve>CVE-2017-16613</cve>
         <cve>CVE-2022-25168</cve>
         <cve>CVE-2022-26612</cve>
+        <cve>CVE-2019-14887</cve>
     </suppress>
 </suppressions>
 

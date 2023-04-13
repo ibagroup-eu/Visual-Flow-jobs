@@ -20,21 +20,23 @@ package by.iba.vf.spark.transformation.config
 
 import by.iba.vf.spark.transformation.exception.TransformationConfigurationException
 import net.liftweb.json
+import com.jayway.jsonpath.JsonPath
 
 final case class ProcessConfiguration(nodes: Seq[Node], edges: Seq[Edge])
 
 object ProcessConfiguration {
   private implicit val Formats: json.DefaultFormats.type = json.DefaultFormats
   private val JobConfig: String = "JOB_CONFIG"
+  private val paramPath = "$.text"
 
   def read: ProcessConfiguration = json.parse(applyParams(getParam(JobConfig))).extract[ProcessConfiguration]
 
   private def applyParams(str: String): String =
-    "#([A-Za-z0-9\\-_]{1,50})#".r.replaceAllIn(str, matcher => getParam(matcher.group(1)))
+    "#([A-Za-z0-9\\-_]{1,50})#".r.replaceAllIn(str, matcher => JsonPath.read[String](getParam(matcher.group(1)), paramPath))
 
   private def getParam(param: String): String = sys.env.getOrElse(
     param,
-    throw new TransformationConfigurationException(s"Failed to acquire param: ${param}")
+    throw new TransformationConfigurationException(s"Failed to acquire param: $param")
   )
 }
 

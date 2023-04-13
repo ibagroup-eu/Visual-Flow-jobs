@@ -16,7 +16,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-dependency-check
-/.idea
-notification-service/.idea
-notification-service/target
+FROM public.ecr.aws/lambda/java:11
+
+COPY target/notification-service-1.0-SNAPSHOT-jar-with-dependencies.jar /app/notification-service.jar
+
+RUN yum update -y && yum clean all && rm -rf /var/cache/yum
+
+WORKDIR /app/
+
+ENTRYPOINT ["/bin/bash", "-c"]
+
+CMD ["java -jar notification-service.jar"]

@@ -1,0 +1,12 @@
+Environment variables:
+
+EMAIL=example@gmail.com         # Sender's email
+PASSWORD=*****                  # App password
+SMTP_HOST=smtp.gmail.com        # Smtp host
+SMTP_PORT=465                   # Smtp port
+SMTP_SSL=true                   # SSL enabling true/false
+SMTP_AUTH=true                  # Auth enabling true/false
+
+Run example:
+
+CMD ["java -jar notification-service.jar 'name@mail.com, name2@mail.com' 'Subject' 'Massage'"]

@@ -1,0 +1,2 @@
+%s>The pipeline *<%s|%s>* of project *<%s|%s>* finished with\n>status %s *%s* on %s.\n>
+>*<%s|OPEN in PIPELINE DESIGNER>*
