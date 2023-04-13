@@ -40,7 +40,7 @@ _If you want to run the slack job in kubernetes environment, check out [Dockerfi
 ## Spark jobs
 There are 3 most common ways of running spark jobs:
 
-## 1. In kubernetes via [backend API](https://github.com/ibagomel/Visual-Flow-backend)
+## 1. In kubernetes via [backend API](https://github.com/ibagroup-eu/Visual-Flow-backend)
 This requires you to have a properly configured and running backend API that has the connection to the Kubernetes server you want to run this on.
 
 In order to run the job you have to:
