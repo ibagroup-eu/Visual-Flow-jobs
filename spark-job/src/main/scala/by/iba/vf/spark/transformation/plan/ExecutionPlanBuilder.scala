@@ -26,7 +26,7 @@ import by.iba.vf.spark.transformation.exception.UnknownStageException
 import by.iba.vf.spark.transformation.stage.Stage
 import by.iba.vf.spark.transformation.stage.StageBuilder
 import by.iba.vf.spark.transformation.stage.function.{CacheStageBuilder, ChangeDataCaptureStageBuilder, DateTimeStageBuilder, FilterStageBuilder, GroupByStageBuilder, HandleNullStageBuilder, JoinStageBuilder, PivotStageBuilder, RemoveDuplicatesStageBuilder, SliceStageBuilder, SortStageBuilder, StringStageBuilder, TransformStageBuilder, UnionStageBuilder, ValidateStageBuilder, WithColumnStageBuilder}
-import by.iba.vf.spark.transformation.stage.read.{CassandraReadStageBuilder, ClickhouseReadStageBuilder, ClusterReadStageBuilder, DataGeneratorStageBuilder, DataframeReadStageBuilder, ElasticReadStageBuilder, JdbcReadStageBuilder, MongoReadStageBuilder, ObjectStorageReadCOSStageBuilder, ObjectStorageReadS3StageBuilder, RedisReadStageBuilder, RedshiftReadStageBuilder}
+import by.iba.vf.spark.transformation.stage.read.{CassandraReadStageBuilder, ClickhouseReadStageBuilder, ClusterReadStageBuilder, DataGeneratorStageBuilder, DataframeReadStageBuilder, ElasticReadStageBuilder, JdbcReadStageBuilder, MongoReadStageBuilder, ObjectStorageReadCOSStageBuilder, ObjectStorageReadS3StageBuilder, RedisReadStageBuilder, RedshiftReadStageBuilder, RequestReadStageBuilder}
 import by.iba.vf.spark.transformation.stage.write.{CassandraWriteStageBuilder, ClickhouseWriteStageBuilder, ClusterWriteStageBuilder, ElasticWriteStageBuilder, JdbcWriteStageBuilder, MongoWriteStageBuilder, ObjectStorageWriteCOSStageBuilder, ObjectStorageWriteS3StageBuilder, RedisWriteStageBuilder, RedshiftWriteStageBuilder, StdoutWriteStageBuilder}
 
 object ExecutionPlanBuilder {
@@ -72,7 +72,8 @@ object ExecutionPlanBuilder {
       ClickhouseReadStageBuilder,
       ClickhouseWriteStageBuilder,
       PivotStageBuilder,
-      HandleNullStageBuilder
+      HandleNullStageBuilder,
+      RequestReadStageBuilder
     )
 
   def buildExecutionPlan(pc: ProcessConfiguration): ExecutionPlan = {

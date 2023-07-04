@@ -90,9 +90,9 @@ public class EmailNotificationService implements SendingStrategy {
             LOGGER.info("Sending notification from {} to {}", senderEmail, notification.getSendTo());
             Transport.send(emailMessage);
             LOGGER.info("The notification was sent successfully!");
-        } catch (MessagingException | NullPointerException e) {
+        } catch (Exception e) {
             LOGGER.error("An error has occurred during sending a letter: ", e);
-            return false;
+            throw new IllegalStateException("Unable to connect to Email Account", e);
         }
         return true;
     }

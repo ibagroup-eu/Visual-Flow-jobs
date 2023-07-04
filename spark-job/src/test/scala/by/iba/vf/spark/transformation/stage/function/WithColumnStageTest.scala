@@ -21,7 +21,7 @@ package by.iba.vf.spark.transformation.stage.function
 import by.iba.vf.spark.transformation.config.Node
 import by.iba.vf.spark.transformation.stage.{OperationType, Stage}
 import org.apache.spark.sql.{DataFrame, SparkSession}
-import org.apache.spark.sql.functions.{expr, lit, col}
+import org.apache.spark.sql.functions.{expr, lit, col, explode}
 import org.mockito.scalatest.MockitoSugar
 import org.scalatest.PrivateMethodTester
 import org.scalatest.funspec.AnyFunSpec
@@ -42,7 +42,8 @@ class WithColumnStageTest extends AnyFunSpec with MockitoSugar with PrivateMetho
       "count(*) OVER (PARTITION BY department)",
       "regexp_replace(a2, 1, 5)",
       "CASE WHEN a2 == 3 THEN regexp_replace(a2, a2, b) ELSE a2 END",
-      "translate(a2, 'abc', 'cdb')"
+      "translate(a2, 'abc', 'cdb')",
+      ""
     )
 
     val operationVector = Vector(
@@ -54,7 +55,8 @@ class WithColumnStageTest extends AnyFunSpec with MockitoSugar with PrivateMetho
       "useWindowFunction",
       "replaceValues",
       "replaceValuesUsingConditions",
-      "replaceValuesCharByChar"
+      "replaceValuesCharByChar",
+      "explodeColumn"
     )
     val mapVector = Vector(
       Map("expression" -> "a * 2"),
@@ -65,7 +67,8 @@ class WithColumnStageTest extends AnyFunSpec with MockitoSugar with PrivateMetho
       Map("windowFunction" -> "count", "partitionBy" -> "department", "column" -> "*"),
       Map("oldValue" -> "1", "newValue" -> "5"),
       Map("conditions" -> "a2 == 3: a2; b", "otherwise" -> "a2"),
-      Map("oldChars" -> "'abc'", "newChars" -> "'cdb'")
+      Map("oldChars" -> "'abc'", "newChars" -> "'cdb'"),
+      Map("" -> "")
     )
 
     for (i <- operationVector.indices) {
@@ -78,6 +81,8 @@ class WithColumnStageTest extends AnyFunSpec with MockitoSugar with PrivateMetho
         when(df.withColumn("a2", col("a2").cast(funcVector(i)))).thenReturn(df2)
       else if (operationVector(i) == "renameColumn")
         when(df.withColumnRenamed("a2", funcVector(i))).thenReturn(df2)
+      else if (operationVector(i) == "explodeColumn")
+        when(df.withColumn("a2", explode(col("a2")))).thenReturn(df2)
       val stage = new WithColumnStage("id", "a2", operationVector(i), mapVector(i))
       val result = stage invokePrivate PrivateMethod[Option[DataFrame]]('process)(Map("1" -> df), spark)
       result should be(Some(df2))
@@ -97,12 +102,13 @@ class WithColumnStageTest extends AnyFunSpec with MockitoSugar with PrivateMetho
       "count(*) OVER (PARTITION BY department)",
       "regexp_replace(a2, 1, 5)",
       "CASE WHEN a2 == 3 THEN regexp_replace(a2, a2, b) ELSE a2 END",
-      "translate(a2, 'abc', 'cdb')"
+      "translate(a2, 'abc', 'cdb')",
+      ""
     )
 
     val operationVector = Vector(
       "deriveColumn", "addConstant", "changeType", "renameColumn", "useConditions",
-      "useWindowFunction", "replaceValues", "replaceValuesUsingConditions", "replaceValuesCharByChar"
+      "useWindowFunction", "replaceValues", "replaceValuesUsingConditions", "replaceValuesCharByChar", "explodeColumn"
     )
     val mapVector = Vector(
       Map("expression" -> "a * 2"),
@@ -113,7 +119,8 @@ class WithColumnStageTest extends AnyFunSpec with MockitoSugar with PrivateMetho
       Map("windowFunction" -> "count", "partitionBy" -> "department", "column" -> "*"),
       Map("oldValue" -> "1", "newValue" -> "5"),
       Map("conditions" -> "a2 == 3: a2; b", "otherwise" -> "a2"),
-      Map("oldChars" -> "'abc'", "newChars" -> "'cdb'")
+      Map("oldChars" -> "'abc'", "newChars" -> "'cdb'"),
+      Map("" -> "")
     )
 
     for (i <- operationVector.indices) {
@@ -126,6 +133,8 @@ class WithColumnStageTest extends AnyFunSpec with MockitoSugar with PrivateMetho
         when(df.withColumn("a2", col("a2").cast(funcVector(i)))).thenReturn(df2)
       else if (operationVector(i) == "renameColumn")
         when(df.withColumnRenamed("a2", funcVector(i))).thenReturn(df2)
+      else if (operationVector(i) == "explodeColumn")
+        when(df.withColumn("a2", explode(col("a2")))).thenReturn(df2)
       val stage = new WithColumnStage("id", "a2", operationVector(i), mapVector(i))
       val stageVector = Vector(
         stage.deriveColumn(df, "a * 2"),
@@ -136,7 +145,8 @@ class WithColumnStageTest extends AnyFunSpec with MockitoSugar with PrivateMetho
         stage.useWindowFunction(df, Map("windowFunction" -> "count", "partitionBy" -> "department", "column" -> "*")),
         stage.replaceValues(df, Map("oldValue" -> "1", "newValue" -> "5")),
         stage.replaceValuesUsingConditions(df, Map("conditions" -> "a2 == 3: a2; b", "otherwise" -> "a2")),
-        stage.replaceValuesCharByChar(df, Map("oldChars" -> "'abc'", "newChars" -> "'cdb'"))
+        stage.replaceValuesCharByChar(df, Map("oldChars" -> "'abc'", "newChars" -> "'cdb'")),
+        stage.explodeColumn(df)
       )
       val result = stageVector(i)
       result should be(df2)
@@ -165,7 +175,9 @@ class WithColumnStageBuilderTest extends AnyFunSpec with PrivateMethodTester {
       Map("operation" -> OperationType.WITH_COLUMN.toString, "operationType" -> "replaceValuesUsingConditions",
         "column" -> "a2", "option.conditions" -> "a2 == 3: a2; b", "option.otherwise" -> "a2"),
       Map("operation" -> OperationType.WITH_COLUMN.toString, "operationType" -> "replaceValuesCharByChar",
-        "column" -> "a2", "oldChars" -> "'abc'", "newChars" -> "'cdb'")
+        "column" -> "a2", "oldChars" -> "'abc'", "newChars" -> "'cdb'"),
+      Map("operation" -> OperationType.WITH_COLUMN.toString, "operationType" -> "explodeColumn",
+        "column" -> "a2"),
     )
 
     for (i <- configVector.indices) {
@@ -194,7 +206,9 @@ class WithColumnStageBuilderTest extends AnyFunSpec with PrivateMethodTester {
       Map("operation" -> OperationType.WITH_COLUMN.toString, "operationType" -> "replaceValuesUsingConditions",
         "column" -> "a2", "option.conditions" -> "a2 == 3: a2; b", "option.otherwise" -> "a2"),
       Map("operation" -> OperationType.WITH_COLUMN.toString, "operationType" -> "replaceValuesCharByChar",
-        "column" -> "a2", "oldChars" -> "'abc'", "newChars" -> "'cdb'")
+        "column" -> "a2", "oldChars" -> "'abc'", "newChars" -> "'cdb'"),
+      Map("operation" -> OperationType.WITH_COLUMN.toString, "operationType" -> "explodeColumn",
+        "column" -> "a2"),
     )
 
     for (i <- configVector.indices) {

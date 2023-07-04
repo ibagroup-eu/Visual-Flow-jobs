@@ -23,7 +23,7 @@ import by.iba.vf.spark.transformation.exception.TransformationConfigurationExcep
 import by.iba.vf.spark.transformation.stage.OperationType
 import by.iba.vf.spark.transformation.stage.Stage
 import by.iba.vf.spark.transformation.stage.StageBuilder
-import org.apache.spark.sql.functions.{col, expr, lit}
+import org.apache.spark.sql.functions.{col, expr, lit, explode}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.SparkSession
 
@@ -125,6 +125,10 @@ private[function] final class WithColumnStage(val id: String, column: String,
     df.withColumn(column, expr(expression))
   }
 
+  def explodeColumn(df: DataFrame): DataFrame = {
+    df.withColumn(column, explode(col(column)))
+  }
+
   def useWithColumn(df: DataFrame): DataFrame = {
     operationType match {
       case "deriveColumn" => deriveColumn(df, options("expression"))
@@ -136,6 +140,7 @@ private[function] final class WithColumnStage(val id: String, column: String,
       case "replaceValues" => replaceValues(df, options)
       case "replaceValuesUsingConditions" => replaceValuesUsingConditions(df, options)
       case "replaceValuesCharByChar" => replaceValuesCharByChar(df, options)
+      case "explodeColumn" => explodeColumn(df)
       case _ =>
        throw new TransformationConfigurationException(s"Operation $operationType does not exist")
     }

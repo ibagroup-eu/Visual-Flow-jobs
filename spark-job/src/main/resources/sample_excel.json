@@ -1,0 +1,57 @@
+{
+  "nodes": [
+    {
+      "id": "table1",
+      "value": {
+        "operation": "READ",
+        "storage": "s3",
+        "endpoint": "",
+        "ssl": "false",
+        "accessKey": "",
+        "secretKey": "",
+        "bucket": "visualflow-gomel",
+        "path": "excel_example.xlsx",
+        "format": "excel",
+        "anonymousAccess": "false",
+        "option.header": "true"
+      }
+    },
+    {
+      "id": "table2",
+      "value": {
+        "operation": "WRITE",
+        "name": "writeConsole",
+        "storage": "stdout",
+        "quantity": "10"
+      }
+    },
+    {
+      "id": "write1",
+      "value": {
+        "operation": "WRITE",
+        "storage": "s3",
+        "endpoint": "",
+        "ssl": "false",
+        "accessKey": "",
+        "secretKey": "",
+        "bucket": "visualflow-gomel",
+        "path": "excel_example_1.xlsx",
+        "format": "excel",
+        "anonymousAccess": "false",
+        "option.header": "true",
+        "option.dataAddress": "'My Sheet'!B3:C35",
+        "writeMode": "overwrite"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "table1",
+      "target": "table2"
+    },
+    {
+      "source": "table1",
+      "target": "write1"
+    }
+  ]
+}

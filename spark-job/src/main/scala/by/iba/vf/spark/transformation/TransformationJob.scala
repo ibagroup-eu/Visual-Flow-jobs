@@ -45,13 +45,17 @@ private[transformation] object TransformationJob extends ResultLogger {
     }
   }
 
+  @SuppressWarnings(Array("CatchException"))
   def main(args: Array[String]): Unit = {
     implicit val spark: SparkSession = SparkSession.builder().withExtensions(new CassandraSparkExtensions).getOrCreate()
 
     try {
       run
-    } finally {
       spark.stop()
+    } catch {
+      case e: Exception => logger.error(s"\nException in thread '${Thread.currentThread().getName}' $e\n\tat ${e.getStackTrace.mkString("\n\tat ")}")
+        spark.stop()
+        System.exit(1)
     }
   }
 }

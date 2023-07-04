@@ -29,7 +29,7 @@ import org.apache.spark.sql.functions
 private[function] final class GroupByStage(
     val id: String,
     groupingCols: Array[String],
-    colFun: Map[String, String],
+    colFun: Array[(String, String)],
     dropGroupingColumns: Boolean
 ) extends Stage {
   override val operation: OperationType.Value = OperationType.GROUP
@@ -40,7 +40,7 @@ private[function] final class GroupByStage(
     input.values.headOption.map(groupBy)
 
   def groupBy(df: DataFrame): DataFrame = {
-    val result = df.groupBy(groupingCols.map(functions.col): _*).agg(colFun)
+    val result = df.groupBy(groupingCols.map(functions.col): _*).agg(colFun.head, colFun.tail: _*)
     if (dropGroupingColumns) {
       result.drop(groupingCols: _*)
     } else {
@@ -69,7 +69,6 @@ object GroupByStageBuilder extends StageBuilder {
         val Array(col, fun) = colFun.split(":")
         col.trim -> fun.trim
       }
-      .toMap
     val dropGroupingColumns = config.value.getOrElse(FieldDropGroupingColumns, "false")
     new GroupByStage(id, groupingCols, groupingCriteria, dropGroupingColumns.toBoolean)
   }

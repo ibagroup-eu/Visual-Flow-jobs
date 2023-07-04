@@ -36,10 +36,10 @@ class GroupByStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodTe
     val df = mock[DataFrame]
     val df2 = mock[DataFrame]
     val groupingCols = Array("test1", "test2")
-    val colFun = Map("test1" -> "max", "test2" -> "max", "test3" -> "max")
+    val colFun = Array("test1" -> "max", "test2" -> "max", "test3" -> "max")
     val groupedDF = mock[RelationalGroupedDataset]
     when(df.groupBy(groupingCols.map(col): _*)).thenReturn(groupedDF)
-    when(groupedDF.agg(colFun)).thenReturn(df2)
+    when(groupedDF.agg(colFun.head, colFun.tail: _*)).thenReturn(df2)
     val stage = new GroupByStage("id", groupingCols, colFun, false)
 
     val result = stage invokePrivate PrivateMethod[Option[DataFrame]]('process)(Map("1" -> df), spark)
@@ -51,19 +51,19 @@ class GroupByStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodTe
     val df = mock[DataFrame]
     val df2 = mock[DataFrame]
     val groupingCols = Array("test1", "test2")
-    val colFun = Map("test1" -> "max", "test2" -> "max", "test3" -> "max", "*" -> "count")
+    val colFun = Array("test1" -> "max", "test2" -> "max", "test3" -> "max", "*" -> "count")
     val groupedDF = mock[RelationalGroupedDataset]
     val stage = new GroupByStage("id", groupingCols, colFun, true)
 
     when(df.groupBy(groupingCols.map(col): _*)).thenReturn(groupedDF)
-    when(groupedDF.agg(colFun)).thenReturn(df2)
+    when(groupedDF.agg(colFun.head, colFun.tail: _*)).thenReturn(df2)
     when(df2.drop(groupingCols: _*)).thenReturn(df2)
 
     val result = stage.groupBy(df)
 
     result should be(df2)
     verify(df).groupBy(groupingCols.map(col): _*)
-    verify(groupedDF).agg(colFun)
+    verify(groupedDF).agg(colFun.head, colFun.tail: _*)
     verify(df2).drop(groupingCols: _*)
   }
 

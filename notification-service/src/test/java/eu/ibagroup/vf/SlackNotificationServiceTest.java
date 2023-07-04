@@ -80,6 +80,7 @@ class SlackNotificationServiceTest {
         when(mockedSlack.methods()).thenReturn(client);
 
         UsersListResponse foundUsers = new UsersListResponse();
+        foundUsers.setOk(true);
         foundUsers.setMembers(List.of(
                 initUser("2Uid", "user2"),
                 initUser("4Uid", "user4")

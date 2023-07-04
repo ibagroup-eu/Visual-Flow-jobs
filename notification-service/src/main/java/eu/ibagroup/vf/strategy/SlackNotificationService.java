@@ -2,6 +2,7 @@ package eu.ibagroup.vf.strategy;
 
 import com.slack.api.Slack;
 import com.slack.api.methods.MethodsClient;
+import com.slack.api.methods.SlackApiException;
 import com.slack.api.methods.response.chat.ChatPostMessageResponse;
 import com.slack.api.methods.response.conversations.ConversationsListResponse;
 import com.slack.api.methods.response.users.UsersListResponse;
@@ -13,6 +14,7 @@ import com.slack.api.model.block.composition.MarkdownTextObject;
 import eu.ibagroup.vf.model.Notification;
 import eu.ibagroup.vf.util.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.Response;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.plexus.util.StringUtils;
 import java.nio.charset.StandardCharsets;
@@ -55,6 +57,9 @@ public class SlackNotificationService implements SendingStrategy {
         try {
             this.client = Slack.getInstance().methods();
             allUsers = client.usersList(r -> r.token(CommonUtils.getEnvProperty(SLACK_TOKEN)));
+            if (!allUsers.isOk()) {
+                throw new IllegalStateException(allUsers.getError());
+            }
         } catch (Exception e) {
             LOGGER.error("An error has occurred during connection to Slack: {}", e.getMessage());
             throw new IllegalStateException("Unable to connect to Slack", e);
