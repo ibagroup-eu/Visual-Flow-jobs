@@ -34,7 +34,7 @@ class FilterStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodTes
     val df = mock[DataFrame]
     val df2 = mock[DataFrame]
     when(df.filter("test.b == 4")).thenReturn(df2)
-    val stage = new FilterStage("id", "test.b == 4")
+    val stage = new FilterStage(Node("id", Map()), "test.b == 4")
 
     val result = stage invokePrivate PrivateMethod[Option[DataFrame]]('process)(Map("1" -> df), spark)
 
@@ -45,7 +45,7 @@ class FilterStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodTes
     val df = mock[DataFrame]
     val df2 = mock[DataFrame]
     when(df.filter("test.b == 4")).thenReturn(df2)
-    val stage = new FilterStage("id", "test.b == 4")
+    val stage = new FilterStage(Node("id", Map()), "test.b == 4")
 
     val result = stage.filter(df)
 

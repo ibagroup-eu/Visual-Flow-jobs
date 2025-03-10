@@ -39,7 +39,7 @@ class CassandraReadStageTest extends AnyFunSpec with PrivateMethodTester with Mo
     when(dfReader.cassandraFormat(table, keyspace, "", pushdownEnable = true)).thenReturn(dfReader)
     when(dfReader.load).thenReturn(df)
 
-    val stage = new CassandraReadStage(id, config)
+    val stage = new CassandraReadStage(Node(id, Map()), config)
     stage.read
   }
 }

@@ -18,18 +18,37 @@
  */
 package by.iba.vf.spark.transformation.stage.write
 
+import java.io.ByteArrayOutputStream
+
 import by.iba.vf.spark.transformation.config.Node
 import by.iba.vf.spark.transformation.stage.{OperationType, Stage, StageBuilder}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
-private[write] final class StdoutWriteStage(override val id: String, quantity: Int)
-  extends WriteStage(id, StdoutWriteStageBuilder.StdoutStorage) {
+import scala.util.Using
+
+private[write] final class StdoutWriteStage(override val configNode: Node, quantity: Int)
+  extends WriteStage(configNode, StdoutWriteStageBuilder.StdoutStorage) {
 
   override val builder: StageBuilder = StdoutWriteStageBuilder
 
+  @SuppressWarnings(Array("UnsafeTraversableMethods"))
+  override protected def process(input: Map[String, DataFrame])(implicit spark: SparkSession): Option[DataFrame] = {
+    val df = input.values.head
+    log(s"Writing to stdout, stage $id")
+    write(df)
+    log(s"Total number of rows written: ${Math.min(quantity, df.count())}")
+    Some(df)
+  }
+
   override def write(df: DataFrame)(implicit spark: SparkSession): Unit = {
-    df.show(quantity, truncate = false)
-    printf("Total row count: %d%n", df.count())
+    Using(new ByteArrayOutputStream){ outCapture =>
+      Console.withOut(outCapture) {
+        df.show(quantity, truncate = false)
+      }
+      val result = new String(outCapture.toByteArray)
+      log(f"Written data (top $quantity rows):%n$result")
+      log(f"Total row count: ${df.count()}")
+    }
   }
 }
 
@@ -45,6 +64,6 @@ object StdoutWriteStageBuilder extends StageBuilder {
 
   override protected def convert(config: Node): Stage = {
     val id = config.id
-    new StdoutWriteStage(id, config.value.get(FieldQuantity).map(Integer.parseInt).getOrElse(10))
+    new StdoutWriteStage(config, config.value.get(FieldQuantity).map(Integer.parseInt).getOrElse(10))
   }
 }

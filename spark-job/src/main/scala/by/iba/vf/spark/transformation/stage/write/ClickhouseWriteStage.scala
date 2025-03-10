@@ -23,8 +23,8 @@ import by.iba.vf.spark.transformation.stage.{ClickhouseStageConfig, Stage, Stage
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import java.sql.DriverManager
 
-class ClickhouseWriteStage(override val id: String, config: ClickhouseStageConfig)
-  extends WriteStage(id, ClickhouseStageConfig.storageId) {
+class ClickhouseWriteStage(override val configNode: Node, config: ClickhouseStageConfig)
+  extends WriteStage(configNode, ClickhouseStageConfig.storageId) {
 
   override def write(df: DataFrame)(implicit spark: SparkSession): Unit = {
     if (config.write_mode.orNull.equals("Overwrite")) {
@@ -57,6 +57,6 @@ object ClickhouseWriteStageBuilder extends WriteStageBuilder {
   }
 
   override protected def convert(config: Node): Stage = {
-    new ClickhouseWriteStage(config.id, new ClickhouseStageConfig(config))
+    new ClickhouseWriteStage(config, new ClickhouseStageConfig(config))
   }
 }

@@ -83,7 +83,7 @@ class WithColumnStageTest extends AnyFunSpec with MockitoSugar with PrivateMetho
         when(df.withColumnRenamed("a2", funcVector(i))).thenReturn(df2)
       else if (operationVector(i) == "explodeColumn")
         when(df.withColumn("a2", explode(col("a2")))).thenReturn(df2)
-      val stage = new WithColumnStage("id", "a2", operationVector(i), mapVector(i))
+      val stage = new WithColumnStage(Node("id", Map()), "a2", operationVector(i), mapVector(i))
       val result = stage invokePrivate PrivateMethod[Option[DataFrame]]('process)(Map("1" -> df), spark)
       result should be(Some(df2))
     }
@@ -135,7 +135,7 @@ class WithColumnStageTest extends AnyFunSpec with MockitoSugar with PrivateMetho
         when(df.withColumnRenamed("a2", funcVector(i))).thenReturn(df2)
       else if (operationVector(i) == "explodeColumn")
         when(df.withColumn("a2", explode(col("a2")))).thenReturn(df2)
-      val stage = new WithColumnStage("id", "a2", operationVector(i), mapVector(i))
+      val stage = new WithColumnStage(Node("id", Map()), "a2", operationVector(i), mapVector(i))
       val stageVector = Vector(
         stage.deriveColumn(df, "a * 2"),
         stage.addConstant(df, "constant"),

@@ -49,7 +49,7 @@ class HandleNullStageTest extends AnyFunSpec with MockitoSugar with PrivateMetho
         when(df.na).thenReturn(df1)
         when(df1.fill(fillMap)).thenReturn(df2)
 
-        val stage = new HandleNullStage("id", HandleNullType.FILL, config)
+        val stage = new HandleNullStage(Node("id", Map()), HandleNullType.FILL, config)
 
         val result = stage invokePrivate PrivateMethod[Option[DataFrame]]('process)(Map("1" -> df), spark)
 
@@ -58,14 +58,14 @@ class HandleNullStageTest extends AnyFunSpec with MockitoSugar with PrivateMetho
         when(df.na).thenReturn(df1)
         when(df1.fill(config("fillValues"))).thenReturn(df2)
 
-        val stage = new HandleNullStage("id", HandleNullType.FILL, config)
+        val stage = new HandleNullStage(Node("id", Map()), HandleNullType.FILL, config)
         val result = stage invokePrivate PrivateMethod[Option[DataFrame]]('process)(Map("1" -> df), spark)
         result should be(Some(df2))
       } else if (config.contains("dropType") && config("dropType") == "row") {
         when(df.na).thenReturn(df1)
         when(df1.drop(config("dropChoice"))).thenReturn(df2)
 
-        val stage = new HandleNullStage("id", HandleNullType.DROP, config)
+        val stage = new HandleNullStage(Node("id", Map()), HandleNullType.DROP, config)
         val result = stage invokePrivate PrivateMethod[Option[DataFrame]]('process)(Map("1" -> df), spark)
         result should be(Some(df2))
       }
@@ -94,7 +94,7 @@ class HandleNullStageTest extends AnyFunSpec with MockitoSugar with PrivateMetho
         when(df.na).thenReturn(df1)
         when(df1.fill(fillMap)).thenReturn(df2)
 
-        val stage = new HandleNullStage("id", HandleNullType.FILL, config)
+        val stage = new HandleNullStage(Node("id", Map()), HandleNullType.FILL, config)
 
         val result = stage.fill(df)
 
@@ -103,7 +103,7 @@ class HandleNullStageTest extends AnyFunSpec with MockitoSugar with PrivateMetho
         when(df.na).thenReturn(df1)
         when(df1.fill(config("fillValues"))).thenReturn(df2)
 
-        val stage = new HandleNullStage("id", HandleNullType.FILL, config)
+        val stage = new HandleNullStage(Node("id", Map()), HandleNullType.FILL, config)
 
         val result = stage.fill(df)
 
@@ -112,7 +112,7 @@ class HandleNullStageTest extends AnyFunSpec with MockitoSugar with PrivateMetho
         when(df.na).thenReturn(df1)
         when(df1.drop(config("dropChoice"))).thenReturn(df2)
 
-        val stage = new HandleNullStage("id", HandleNullType.DROP, config)
+        val stage = new HandleNullStage(Node("id", Map()), HandleNullType.DROP, config)
         val result = stage.drop(df)
         result should be(df2)
       }

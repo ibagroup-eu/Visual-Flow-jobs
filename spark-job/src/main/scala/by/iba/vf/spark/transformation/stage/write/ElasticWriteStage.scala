@@ -30,12 +30,12 @@ import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.SparkSession
 
 private[write] class ElasticWriteStage(
-    override val id: String,
+    override val configNode: Node,
     index: String,
     saveMode: Option[String],
     certDataPass: Option[(String, String, String)],
     elasticConfig: Map[String, String]
-) extends WriteStage(id, ElasticStageConfig.storageId) {
+) extends WriteStage(configNode, ElasticStageConfig.storageId) {
 
   override val builder: StageBuilder = ElasticWriteStageBuilder
 
@@ -60,6 +60,6 @@ object ElasticWriteStageBuilder extends WriteStageBuilder {
   override protected def convert(config: Node): Stage = {
     val ec = new ElasticStageConfig(config)
     val (jobMap, elasticMap, certDataPass) = ec.elasticParams
-    new ElasticWriteStage(config.id, jobMap(index), jobMap.get(writeMode), certDataPass, getOptions(config.value) ++ elasticMap)
+    new ElasticWriteStage(config, jobMap(index), jobMap.get(writeMode), certDataPass, getOptions(config.value) ++ elasticMap)
   }
 }

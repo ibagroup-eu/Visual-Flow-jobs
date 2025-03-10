@@ -25,7 +25,7 @@ import org.apache.spark.sql.functions.{add_months, col, current_date, current_ti
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 
-private[function] final class DateTimeStage(val id: String, function: String, options: Map[String, String]) extends Stage {
+private[function] final class DateTimeStage(val configNode: Node, function: String, options: Map[String, String]) extends Stage {
   override val operation: OperationType.Value = OperationType.DATETIME
   override val inputsRequired: Int = 1
   override val builder: StageBuilder = DateTimeStageBuilder
@@ -186,5 +186,5 @@ object DateTimeStageBuilder extends StageBuilder {
     config.get(fieldOperation).contains(OperationType.DATETIME.toString) && config.contains(fieldFunction)
 
   override protected def convert(config: Node): Stage =
-    new DateTimeStage(config.id, config.value(fieldFunction), getOptions(config.value))
+    new DateTimeStage(config, config.value(fieldFunction), getOptions(config.value))
 }

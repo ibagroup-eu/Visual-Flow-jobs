@@ -58,7 +58,7 @@ class MongoReadStageTest extends AnyFunSpec with PrivateMethodTester with Mockit
     when(dfReader.load).thenReturn(df)
     when(df.drop("_id")).thenReturn(df)
 
-    val stage = new MongoReadStage(id, config)
+    val stage = new MongoReadStage(Node(id, Map()), config)
     stage.read
   }
 }

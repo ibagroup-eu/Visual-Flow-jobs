@@ -18,34 +18,40 @@
  */
 package by.iba.vf.spark.transformation.stage.read
 
-import by.iba.vf.spark.transformation.stage.OperationType
-import by.iba.vf.spark.transformation.stage.Stage
+import by.iba.vf.spark.transformation.config.Node
+import by.iba.vf.spark.transformation.stage.mixins.IncrementalLoad
+import by.iba.vf.spark.transformation.stage.{OperationType, Stage}
+import by.iba.vf.spark.transformation.Metadata
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions.max
 
-import java.io.ByteArrayOutputStream
-import scala.util.Using
-
-abstract class ReadStage(val id: String, val storage: String) extends Stage {
+abstract class ReadStage(val configNode: Node, val storage: String) extends Stage with IncrementalLoad {
   override val operation: OperationType.Value = OperationType.READ
   override val inputsRequired: Int = 0
+  private val incrementalLoadParams: Map[String, String] = getIncrementalLoadParams(configNode.value)
 
   def read(implicit spark: SparkSession): DataFrame
 
   override protected def process(input: Map[String, DataFrame])(implicit spark: SparkSession): Option[DataFrame] = {
     log(s"Reading from $storage, stage $id")
-    val data = Some(read)
-    data.foreach(df => {
-      Using(new ByteArrayOutputStream){ outCapture =>
-        Console.withOut(outCapture) {
-          df.show(10, truncate = false)
-        }
-        val result = new String(outCapture.toByteArray)
-        log(f"Read data sample(top 10 rows):%n$result")
-        log(s"Total number of rows read: ${df.count()}")
-      }
-    })
-    data
+    Some(read)
+      .map(applyIncrementalLoadBehavior(_, configNode.value))
+  }
+
+  override def deriveMetadata(df: DataFrame): Metadata = {
+    val meta: Metadata = super.deriveMetadata(df)
+    val offsetKey = incrementalLoadParams(fieldIncrementalOffsetKey)
+    var offsetValue = incrementalLoadParams(fieldIncrementalOffsetValue)
+    if (incrementalLoadParams(fieldIncrementalLoad).toBoolean) {
+      val maxOffsetValueDataset = df.agg(max(offsetKey).alias(offsetKey)).collect()
+      if (maxOffsetValueDataset.length > 0 && meta.count != 0)
+        offsetValue = maxOffsetValueDataset(0).getAs[String](offsetKey)
+      if (offsetValue != null)
+        meta.nodeUpdate.value += fieldIncrementalOffsetValue -> offsetValue
+    }
+
+    meta
   }
 }
 

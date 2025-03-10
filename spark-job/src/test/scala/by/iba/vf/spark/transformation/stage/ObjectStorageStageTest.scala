@@ -19,6 +19,7 @@
 package by.iba.vf.spark.transformation.stage
 
 import by.iba.vf.spark.transformation.config.Node
+import by.iba.vf.spark.transformation.stage.config.objectstores.{COSConfig, S3Config}
 import org.apache.spark.sql.RuntimeConfig
 import org.apache.spark.sql.SparkSession
 import org.mockito.scalatest.MockitoSugar
@@ -30,7 +31,7 @@ class ObjectStorageStageTest extends AnyFunSpec with PrivateMethodTester with Mo
   val m: Map[String, String] = Map(
     "accessKey" -> "ak",
     "bucket" -> "bt",
-    "format" -> "fmt",
+    "format" -> "parquet",
     "path" -> "pth",
     "writeMode" -> "wm",
     "secretKey" -> "sk"
@@ -50,12 +51,12 @@ class ObjectStorageStageTest extends AnyFunSpec with PrivateMethodTester with Mo
       conf.setConfig(spark)
 
       verify(runtimeConf).set("fs.stocator.scheme.list", "cos")
-      verify(runtimeConf).set(s"fs.cos.impl", "com.ibm.stocator.fs.ObjectStoreFileSystem")
-      verify(runtimeConf).set(s"fs.stocator.cos.impl", s"com.ibm.stocator.fs.cos.COSAPIClient")
-      verify(runtimeConf).set(s"fs.stocator.cos.scheme", "cos")
-      verify(runtimeConf).set(s"fs.cos.service.endpoint", "ep")
-      verify(runtimeConf).set(s"fs.cos.service.access.key", "ak")
-      verify(runtimeConf).set(s"fs.cos.service.secret.key", "sk")
+      verify(runtimeConf).set("fs.cos.impl", "com.ibm.stocator.fs.ObjectStoreFileSystem")
+      verify(runtimeConf).set("fs.stocator.cos.impl", "com.ibm.stocator.fs.cos.COSAPIClient")
+      verify(runtimeConf).set("fs.stocator.cos.scheme", "cos")
+      verify(runtimeConf).set("fs.cos.service.endpoint", "ep")
+      verify(runtimeConf).set("fs.cos.service.access.key", "ak")
+      verify(runtimeConf).set("fs.cos.service.secret.key", "sk")
     }
     it("path") {
       new COSConfig(cosNode).connectPath should be ("cos://bt.service/pth")

@@ -24,8 +24,8 @@ import by.iba.vf.spark.transformation.stage.{ClusterStageConfig, ReadStageBuilde
 import by.iba.vf.spark.transformation.stage.read.ObjectStorageReadS3StageBuilder.getOptions
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
-class ClusterReadStage(override val id: String, var options: Map[String, String], config: ClusterStageConfig)
-  extends ReadStage(id, ClusterStageConfig.storageId) {
+class ClusterReadStage(override val configNode: Node, var options: Map[String, String], config: ClusterStageConfig)
+  extends ReadStage(configNode, ClusterStageConfig.storageId) {
 
   override def read(implicit spark: SparkSession): DataFrame = {
     if (config.format == "avro" && !config.useSchema)
@@ -43,6 +43,6 @@ object ClusterReadStageBuilder extends ReadStageBuilder {
     config.contains(pathFieldName) && config.contains(formatFieldName)
 
   override protected def convert(config: Node): Stage = {
-    new ClusterReadStage(config.id, getOptions(config.value), new ClusterStageConfig(config))
+    new ClusterReadStage(config, getOptions(config.value), new ClusterStageConfig(config))
   }
 }

@@ -77,7 +77,7 @@ class ClickhouseReadStageTest extends AnyFunSpec with PrivateMethodTester with M
       when(dfReader.options(conf.parameter)).thenReturn(dfReader)
       when(dfReader.load()).thenReturn(df)
 
-      val stage = new ClickhouseReadStage(id, conf)
+      val stage = new ClickhouseReadStage(Node(id, Map()), conf)
       val result = stage.read
 
       result should be(df)

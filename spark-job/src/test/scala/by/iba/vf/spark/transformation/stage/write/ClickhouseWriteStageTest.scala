@@ -91,7 +91,7 @@ class ClickhouseWriteStageTest extends AnyFunSpec with PrivateMethodTester with 
           doNothing.when(dfWriter).save
         }
 
-        new ClickhouseWriteStage(id, conf).write(df)
+        new ClickhouseWriteStage(Node(id, Map()), conf).write(df)
       }
   }
 

@@ -22,8 +22,8 @@ import by.iba.vf.spark.transformation.config.Node
 import by.iba.vf.spark.transformation.stage.{ClickhouseStageConfig, ReadStageBuilder, Stage, StageBuilder}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
-class ClickhouseReadStage(override val id: String, config: ClickhouseStageConfig)
-  extends ReadStage(id, ClickhouseStageConfig.storageId){
+class ClickhouseReadStage(override val configNode: Node, config: ClickhouseStageConfig)
+  extends ReadStage(configNode, ClickhouseStageConfig.storageId){
 
   override def read(implicit spark: SparkSession): DataFrame =
     spark.read.format("jdbc").options(config.parameter).load()
@@ -44,5 +44,5 @@ object ClickhouseReadStageBuilder extends ReadStageBuilder {
   }
 
   override protected def convert(config: Node): Stage =
-    new ClickhouseReadStage(config.id, new ClickhouseStageConfig(config))
+    new ClickhouseReadStage(config, new ClickhouseStageConfig(config))
 }

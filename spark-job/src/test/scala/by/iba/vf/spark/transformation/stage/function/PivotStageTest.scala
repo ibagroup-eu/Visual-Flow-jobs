@@ -41,7 +41,7 @@ class PivotStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodTest
         when(groupedDF.pivot(col("c"))).thenReturn(pivotedDF)
         when(pivotedDF.agg(expr("sum(d)"))).thenReturn(df2)
 
-        val stage = new PivotStage("id", "pivot", Map(
+        val stage = new PivotStage(Node("id", Map()), "pivot", Map(
           "groupBy" -> "a",
           "pivotColumn" -> "c",
           "aggregation" -> "sum(d)")
@@ -55,7 +55,7 @@ class PivotStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodTest
         when(df.selectExpr(Array("a", "stack(3, 'b1', b1, 'b2', b2, 'b3', b3) as (c1, c2)"): _*)).thenReturn(df1)
         when(df1.where("c2 is not null")).thenReturn(df2)
 
-        val stage = new PivotStage("id", "unpivot", Map(
+        val stage = new PivotStage(Node("id", Map()), "unpivot", Map(
           "unchangedColumns" -> "a",
           "unpivotColumns" -> "b1,b2,b3",
           "unpivotNames" -> "c1,c2"
@@ -81,7 +81,7 @@ class PivotStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodTest
         when(groupedDF.pivot(col("c"))).thenReturn(pivotedDF)
         when(pivotedDF.agg(expr("sum(d)"))).thenReturn(df2)
 
-        val stage = new PivotStage("id", operationType, Map(
+        val stage = new PivotStage(Node("id", Map()), operationType, Map(
           "groupBy" -> "a",
           "pivotColumn" -> "c",
           "aggregation" -> "sum(d)")
@@ -95,7 +95,7 @@ class PivotStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodTest
         when(df.selectExpr(Array("a", "stack(3, 'b1', b1, 'b2', b2, 'b3', b3) as (c1, c2)"): _*)).thenReturn(df1)
         when(df1.where("c2 is not null")).thenReturn(df2)
 
-        val stage = new PivotStage("id", operationType, Map(
+        val stage = new PivotStage(Node("id", Map()), operationType, Map(
           "unchangedColumns" -> "a",
           "unpivotColumns" -> "b1,b2,b3",
           "unpivotNames" -> "c1,c2"

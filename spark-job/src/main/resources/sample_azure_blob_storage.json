@@ -1,0 +1,51 @@
+{
+  "nodes": [
+    {
+      "id": "read1",
+      "value": {
+        "operation": "READ",
+        "storage": "azure-blob-storage",
+        "storageAccount": "vfdemodatalake",
+        "authType": "storageAccountKey",
+        "storageAccountKey": "",
+        "container": "vf-demo",
+        "containerPath": "geography_dim",
+        "format": "parquet"
+      }
+    },
+    {
+      "id": "filter",
+      "value": {
+        "operation": "FILTER",
+        "name": "filter",
+        "condition": "state_id <> 'WA'"
+      }
+    },
+    {
+      "id": "write1",
+      "value": {
+        "operation": "WRITE",
+        "storage": "azure-blob-storage",
+        "storageAccount": "vfdemodatalake",
+        "authType": "storageAccountKey",
+        "storageAccountKey": "",
+        "container": "vf-demo",
+        "containerPath": "geography_dim_copy",
+        "format": "parquet",
+        "partitionBy": "state_id",
+        "writeMode": "overwrite"
+      }
+    }
+
+  ],
+  "edges": [
+    {
+      "source": "read1",
+      "target": "filter"
+    },
+    {
+      "source": "filter",
+      "target": "write1"
+    }
+  ]
+}

@@ -74,7 +74,7 @@ class RequestReadStageTest extends AnyFunSpec with PrivateMethodTester with Mock
     when(dshResponse.toDS()).thenReturn(dsResponse)
     when(dfReader.json(dsResponse)).thenReturn(df)
 
-    val stage = new RequestReadStage(id, config, options)
+    val stage = new RequestReadStage(Node(id, Map()), config, options)
     stage.read
   }
 }

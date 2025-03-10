@@ -60,7 +60,7 @@ class MongoWriteStageTest extends AnyFunSpec with PrivateMethodTester with Mocki
     when(dfWriter.options(config)).thenReturn(dfWriter)
     doNothing.when(dfWriter).save()
 
-    val stage = new MongoWriteStage(id, None, config)
+    val stage = new MongoWriteStage(Node(id, Map()), None, config)
     stage.write(df)
   }
 }

@@ -1,0 +1,41 @@
+{
+  "nodes": [
+    {
+      "id": "table1",
+      "value": {
+        "operation": "READ",
+        "storage": "s3",
+        "endpoint": "",
+        "ssl": "false",
+        "accessKey": "",
+        "secretKey": "",
+        "bucket": "visualflow-gomel",
+        "path": "",
+        "format": "csv",
+        "option.header": "true",
+        "anonymousAccess": "false"
+      }
+    },
+    {
+      "id": "table2",
+      "value": {
+        "operation": "WRITE",
+        "storage": "kafka",
+        "bootstrapServers": "okd4w2.okd.gomel.iba.by:31090",
+        "topic": "akutsenka_spark_topic_in",
+        "option.kafka.security.protocol": "SASL_SSL",
+        "option.kafka.ssl.truststore.location": "D:/kafka.truststore.jks",
+        "option.kafka.ssl.truststore.password": "changeit",
+        "option.kafka.sasl.mechanism": "PLAIN",
+        "option.kafka.ssl.endpoint.identification.algorithm": "",
+        "option.kafka.sasl.jaas.config": "org.apache.kafka.common.security.plain.PlainLoginModule required serviceName='kafka-tools' username='admin' password='adminPw';",
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "table1",
+      "target": "table2"
+    }
+  ]
+}

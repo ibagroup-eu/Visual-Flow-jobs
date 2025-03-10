@@ -54,7 +54,7 @@ class ElasticReadStageTest extends AnyFunSpec with PrivateMethodTester with Mock
     when(dfReader.options(config)).thenReturn(dfReader)
     when(dfReader.load("idx")).thenReturn(df)
 
-    val stage = new ElasticReadStage(id, index, None, config)
+    val stage = new ElasticReadStage(Node(id, Map()), index, None, config)
     stage.read
   }
 }

@@ -27,9 +27,10 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions
 
 private[function] final class GroupByStage(
-    val id: String,
+    val configNode: Node,
     groupingCols: Array[String],
     colFun: Array[(String, String)],
+    oldNewNames: Map[String, String],
     dropGroupingColumns: Boolean
 ) extends Stage {
   override val operation: OperationType.Value = OperationType.GROUP
@@ -40,7 +41,12 @@ private[function] final class GroupByStage(
     input.values.headOption.map(groupBy)
 
   def groupBy(df: DataFrame): DataFrame = {
-    val result = df.groupBy(groupingCols.map(functions.col): _*).agg(colFun.head, colFun.tail: _*)
+    val aggDF = df.groupBy(groupingCols.map(functions.col): _*).agg(colFun.head, colFun.tail: _*)
+
+    val result = oldNewNames.foldLeft(aggDF){
+      case (tempDF, (oldName, newName)) => tempDF.withColumnRenamed(oldName, newName)
+    }
+
     if (dropGroupingColumns) {
       result.drop(groupingCols: _*)
     } else {
@@ -62,14 +68,31 @@ object GroupByStageBuilder extends StageBuilder {
     val comma = ","
     val id = config.id
     val groupingCols = config.value(FieldGroupingColumns).split(comma).map(_.trim)
-    val groupingCriteria = config
+    val aggregatingCriteria = config
       .value(FieldGroupingCriteria)
       .split(comma)
       .map { colFun =>
-        val Array(col, fun) = colFun.split(":")
-        col.trim -> fun.trim
+        val Array(col, fun, newCol) = if (colFun.count(_ == ':') == 2) {
+          colFun.split(":", 3)
+        } else {
+          s"$colFun:".split(":", 3)
+        }
+        col.trim -> fun.trim -> newCol.trim
       }
+
+    val renamingCriteria = aggregatingCriteria.foldLeft(Map.empty[String, String]) { case (map, ((col, fun), newCol)) =>
+      if (newCol.nonEmpty) {
+        map + (s"$fun($col)" -> newCol)
+      } else {
+        map
+      }
+    }
+
+    val groupingCriteria = aggregatingCriteria.map { case ((col, fun), _) =>
+      (col, fun)
+    }
+
     val dropGroupingColumns = config.value.getOrElse(FieldDropGroupingColumns, "false")
-    new GroupByStage(id, groupingCols, groupingCriteria, dropGroupingColumns.toBoolean)
+    new GroupByStage(config, groupingCols, groupingCriteria, renamingCriteria, dropGroupingColumns.toBoolean)
   }
 }

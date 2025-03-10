@@ -29,7 +29,7 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.{asc, asc_nulls_first, asc_nulls_last}
 import org.apache.spark.sql.functions.{desc, desc_nulls_first, desc_nulls_last}
 
-private[function] final class SortStage(val id: String, sortType: String, orderColumns: Seq[Column]) extends Stage {
+private[function] final class SortStage(val configNode: Node, sortType: String, orderColumns: Seq[Column]) extends Stage {
   override val operation: OperationType.Value = OperationType.SORT
   override val inputsRequired: Int = 1
   override val builder: StageBuilder = SortStageBuilder
@@ -73,6 +73,6 @@ object SortStageBuilder extends StageBuilder {
     }
     val sortType = config.value(FieldSortType)
 
-    new SortStage(config.id, sortType, orderColumns.toSeq)
+    new SortStage(config, sortType, orderColumns.toSeq)
   }
 }

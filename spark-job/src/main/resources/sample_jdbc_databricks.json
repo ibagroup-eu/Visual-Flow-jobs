@@ -1,0 +1,40 @@
+{
+  "nodes": [
+    {
+      "id": "read1",
+      "value": {
+        "operation": "READ",
+        "customSql": "false",
+        "jdbcUrl": "jdbc:databricks://dbc-cef8efa8-9f35.cloud.databricks.com:443/default;transportMode=http;ssl=1;httpPath=sql/protocolv1/o/42883594658554/0325-225023-bs76lovf;AuthMech=3;",
+        "storage": "databricks-jdbc",
+        "catalog": "sales",
+        "schema": "dims",
+        "table": "geography",
+        "user": "",
+        "password": ""
+      }
+    },
+    {
+      "id": "write1",
+      "value": {
+        "operation": "WRITE",
+        "jdbcUrl": "jdbc:databricks://dbc-cef8efa8-9f35.cloud.databricks.com:443/default;transportMode=http;ssl=1;httpPath=sql/protocolv1/o/42883594658554/0325-225023-bs76lovf;AuthMech=3;",
+        "storage": "databricks-jdbc",
+        "catalog": "sales",
+        "schema": "dims",
+        "table": "geography_copy",
+        "writeMode": "overwrite",
+        "user": "",
+        "password": ""
+      }
+    }
+
+  ],
+  "edges": [
+    {
+      "source": "read1",
+      "target": "write1"
+    }
+
+  ]
+}

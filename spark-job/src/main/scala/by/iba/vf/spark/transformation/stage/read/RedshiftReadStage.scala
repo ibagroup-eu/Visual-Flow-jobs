@@ -24,8 +24,8 @@ import by.iba.vf.spark.transformation.stage.RedshiftStageConfig.{customSql, data
 import by.iba.vf.spark.transformation.stage.{ReadStageBuilder, RedshiftStageConfig, Stage, StageBuilder}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
-class RedshiftReadStage(override val id: String, config: RedshiftStageConfig)
-  extends ReadStage(id, RedshiftStageConfig.storageId) {
+class RedshiftReadStage(override val configNode: Node, config: RedshiftStageConfig)
+  extends ReadStage(configNode, RedshiftStageConfig.storageId) {
   override def read(implicit spark: SparkSession): DataFrame = {
     config.setUpConfigParams(spark.sparkContext)
     var options = config.provideConnectionOptions
@@ -55,5 +55,5 @@ object RedshiftReadStageBuilder extends ReadStageBuilder {
 
 
   override protected def convert(config: Node): Stage =
-    new RedshiftReadStage(config.id, new RedshiftStageConfig(config))
+    new RedshiftReadStage(config, new RedshiftStageConfig(config))
 }

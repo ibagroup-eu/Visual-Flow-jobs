@@ -29,11 +29,11 @@ import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.SparkSession
 
 private[read] final class ElasticReadStage(
-                                            override val id: String,
+                                            override val configNode: Node,
                                             index: String,
                                             certDataPass: Option[(String, String, String)],
                                             elasticConfig: Map[String, String]
-                                          ) extends ReadStage(id, ElasticStageConfig.storageId) {
+                                          ) extends ReadStage(configNode, ElasticStageConfig.storageId) {
 
   override val builder: StageBuilder = ElasticReadStageBuilder
 
@@ -57,6 +57,6 @@ object ElasticReadStageBuilder extends ReadStageBuilder {
   override protected def convert(config: Node): Stage = {
     val ec = new ElasticStageConfig(config)
     val (jobMap, elasticMap, certDataPass) = ec.elasticParams
-    new ElasticReadStage(config.id, jobMap(index), certDataPass, getOptions(config.value) ++ elasticMap)
+    new ElasticReadStage(config, jobMap(index), certDataPass, getOptions(config.value) ++ elasticMap)
   }
 }

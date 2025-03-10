@@ -38,7 +38,8 @@
         "leftDataset": "left-table",
         "rightDataset": "right-table",
         "leftColumns": "emp_dept_id",
-        "rightColumns": "dept_id"
+        "rightColumns": "dept_id",
+        "selectedLeftColumns": "emp_id,name"
       }
     },
     {

@@ -27,7 +27,7 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.storage.StorageLevel
 
 
-private[function] final class CacheStage(val id: String, storageLevel: StorageLevel) extends Stage {
+private[function] final class CacheStage(val configNode: Node, storageLevel: StorageLevel) extends Stage {
   override val operation: OperationType.Value = OperationType.CACHE
   override val inputsRequired: Int = 1
   override val builder: StageBuilder = CacheStageBuilder
@@ -58,6 +58,6 @@ object CacheStageBuilder extends StageBuilder {
       config.value(StorageLevelParameters.replication.toString).toInt
     )
 
-    new CacheStage(config.id, storageLevel)
+    new CacheStage(config, storageLevel)
   }
 }

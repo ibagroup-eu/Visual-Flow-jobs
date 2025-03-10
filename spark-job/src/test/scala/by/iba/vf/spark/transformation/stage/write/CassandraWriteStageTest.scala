@@ -39,7 +39,7 @@ class CassandraWriteStageTest extends AnyFunSpec with PrivateMethodTester with M
     when(dfWriter.cassandraFormat(table, keyspace, "", pushdownEnable = false)).thenReturn(dfWriter)
     doNothing.when(dfWriter).save
 
-    val stage = new CassandraWriteStage(id, config)
+    val stage = new CassandraWriteStage(Node(id, Map()), config)
     stage.write(df)
   }
 }

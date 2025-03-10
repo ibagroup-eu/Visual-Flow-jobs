@@ -37,7 +37,7 @@ class UnionStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodTest
     val df2 = mock[DataFrame]
     val df3 = mock[DataFrame]
     when(df.union(df2)).thenReturn(df3)
-    val stage = new UnionStage("id", unionAll)
+    val stage = new UnionStage(Node("id", Map()), unionAll)
 
     val result = stage invokePrivate PrivateMethod[Option[DataFrame]]('process)(Map("1" -> df, "2" -> df2), spark)
 
@@ -52,7 +52,7 @@ class UnionStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodTest
     val df3 = mock[DataFrame]
     when(df.union(df1)).thenReturn(df2)
     when(df2.distinct()).thenReturn(df3)
-    val stage = new UnionStage("id", unionAll)
+    val stage = new UnionStage(Node("id", Map()), unionAll)
 
     val result = stage invokePrivate PrivateMethod[DataFrame]('union)(df, df1)
 

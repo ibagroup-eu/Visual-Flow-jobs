@@ -26,7 +26,7 @@ import by.iba.vf.spark.transformation.stage.StageBuilder
 import org.apache.spark.sql.functions.{ascii, base64, col, decode, encode, expr, format_number, initcap, instr, length, locate, lower, lpad, ltrim, regexp_extract, repeat, rpad, rtrim, split, substring, substring_index, trim, unbase64, upper}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
-private[function] final class StringStage(val id: String, function: String, options: Map[String, String]) extends Stage {
+private[function] final class StringStage(val configNode: Node, function: String, options: Map[String, String]) extends Stage {
   override val operation: OperationType.Value = OperationType.STRING
   override val inputsRequired: Int = 1
   override val builder: StageBuilder = WithColumnStageBuilder
@@ -172,7 +172,7 @@ object StringStageBuilder extends StageBuilder {
       config.contains(fieldFunction)
 
   override protected def convert(config: Node): Stage = {
-    new StringStage(config.id, config.value(fieldFunction), getOptions(config.value))
+    new StringStage(config, config.value(fieldFunction), getOptions(config.value))
   }
 }
 

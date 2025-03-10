@@ -21,28 +21,28 @@
         <notes><![CDATA[
         This suppresses specific CVEs for the entire project. This is a temporary solution. After the migration to Spark 3.x will be done, the remaining vulnerabilities would have to be fixed.
         ]]></notes>
-        <cve>CVE-2022-33891</cve>
-        <cve>CVE-2021-25642</cve>
-        <cve>CVE-2021-33036</cve>
-        <cve>CVE-2021-37404</cve>
-        <cve>CVE-2020-36632</cve>
-        <cve>CVE-2020-10650</cve>
-        <cve>CVE-2020-9480</cve>
-        <cve>CVE-2008-1997</cve>
         <cve>CVE-2018-17190</cve>
-        <cve>CVE-2021-32626</cve>
-        <cve>CVE-2021-40531</cve>
-        <cve>CVE-2018-7489</cve>
-        <cve>CVE-2020-35491</cve>
-        <cve>CVE-2020-35490</cve>
-        <cve>CVE-2020-10673</cve>
-        <cve>CVE-2017-7525</cve>
         <cve>CVE-2017-16613</cve>
-        <cve>CVE-2022-25168</cve>
+        <cve>CVE-2015-7430</cve>
         <cve>CVE-2022-26612</cve>
-        <cve>CVE-2019-14887</cve>
-        <cve>CVE-2023-22946</cve>
-        <cve>CVE-2020-8840</cve>
+        <cve>CVE-2023-25613</cve>
+        <cve>CVE-2023-36052</cve>
+        <cve>CVE-2020-36632</cve>
+        <cve>CVE-2012-4406</cve>
+        <cve>CVE-2021-42550</cve>
+        <cve>CVE-2024-36114</cve>
+        <!-- TODO: review & fix: -->
+        <cve>CVE-2024-47561</cve>
+        <cve>CVE-2024-43591</cve>
+        <cve>CVE-2024-47554</cve>
+        <cve>CVE-2024-7254</cve>
+        <cve>CVE-2024-47554</cve>
+        <cve>CVE-2024-25638</cve>
+        <cve>CVE-2024-47561</cve>
+        <cve>CVE-2024-7254</cve>
+        <cve>CVE-2022-1271</cve>
+        <cve>CVE-2024-49194</cve>
+        <!-- ^^^ review and fix above vulnerabilities ^^^ -->
     </suppress>
 </suppressions>
 

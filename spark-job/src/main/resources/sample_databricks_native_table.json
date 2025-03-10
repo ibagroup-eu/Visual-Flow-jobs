@@ -1,0 +1,36 @@
+{
+  "nodes": [
+    {
+      "id": "read_databricks_table",
+      "value": {
+        "operation": "READ",
+        "customSql": "false",
+        "storage": "databricks",
+        "catalog": "sales",
+        "schema": "dims",
+        "objectType": "table",
+        "table": "geography"
+      }
+    },
+    {
+      "id": "write_databricks_table",
+      "value": {
+        "operation": "WRITE",
+        "storage": "databricks",
+        "catalog": "sales",
+        "schema": "dims",
+        "objectType": "table",
+        "table": "geography_copy",
+        "writeMode": "overwrite"
+      }
+    }
+
+  ],
+  "edges": [
+    {
+      "source": "read_databricks_table",
+      "target": "write_databricks_table"
+    }
+
+  ]
+}

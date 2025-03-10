@@ -27,7 +27,7 @@ import by.iba.vf.spark.transformation.stage.StageBuilder
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.SparkSession
 
-private[function] final class UnionStage(val id: String, unionAll: Boolean) extends Stage {
+private[function] final class UnionStage(val configNode: Node, unionAll: Boolean) extends Stage {
   override val operation: OperationType.Value = OperationType.UNION
   override val inputsRequired: Int = 2
   override val builder: StageBuilder = UnionStageBuilder
@@ -58,6 +58,6 @@ object UnionStageBuilder extends StageBuilder {
       case unionType  => throw new TransformationConfigurationException(s"Unknown union type: ${unionType}")
     }
 
-    new UnionStage(id, unionAll)
+    new UnionStage(config, unionAll)
   }
 }

@@ -89,7 +89,7 @@ class RedshiftReadStageTest extends AnyFunSpec with PrivateMethodTester with Moc
     doNothing.when(hadoopConfig).set("fs.s3a.access.key", accessKey)
     doNothing.when(hadoopConfig).set("fs.s3a.secret.key", secretKey)
 
-    val stage = new RedshiftReadStage(id, config)
+    val stage = new RedshiftReadStage(Node(id, Map()), config)
     stage.read
   }
 }

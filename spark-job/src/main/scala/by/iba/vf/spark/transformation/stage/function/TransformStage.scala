@@ -23,7 +23,7 @@ import by.iba.vf.spark.transformation.exception.TransformationConfigurationExcep
 import by.iba.vf.spark.transformation.stage.{OperationType, Stage, StageBuilder}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
-private[function] final class TransformStage(val id: String, selectStmt: String, mode: TransformationMode.Value, tableName: Option[String]) extends Stage {
+private[function] final class TransformStage(val configNode: Node, selectStmt: String, mode: TransformationMode.Value, tableName: Option[String]) extends Stage {
   override val operation: OperationType.Value = OperationType.TRANSFORM
   override val inputsRequired: Int = 1
   override val builder: StageBuilder = TransformStageBuilder
@@ -66,7 +66,7 @@ object TransformStageBuilder extends StageBuilder {
 
   override protected def convert(config: Node): Stage =
     new TransformStage(
-      config.id,
+      config,
       config.value(FieldStatement),
       config.value.get(FieldMode).map(mode => TransformationMode.withName(mode)).getOrElse(TransformationMode.Simple),
       config.value.get(FieldTableName)

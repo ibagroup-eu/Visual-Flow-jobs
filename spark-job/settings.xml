@@ -37,8 +37,8 @@
           <snapshots><enabled>true</enabled></snapshots>
         </repository>
         <repository>
-          <id>github</id>
-          <url>https://maven.pkg.github.com/argoproj-labs/argo-client-java</url>
+          <id>spark-transformations</id>
+          <url>https://maven.pkg.github.com/ibagroup-eu/VF-jobs</url>
           <snapshots><enabled>true</enabled></snapshots>
         </repository>
       </repositories>
@@ -67,8 +67,8 @@
 
   <servers>
     <server>
-      <id>github</id>
-      <username>${env.GITHUB_USERNAME}</username>
+      <id>spark-transformations</id>
+      <username>${env.GITHUB_ACTOR}</username>
       <password>${env.GITHUB_TOKEN}</password>
     </server>
   </servers>

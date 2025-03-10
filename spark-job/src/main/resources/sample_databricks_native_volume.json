@@ -1,0 +1,40 @@
+{
+  "nodes": [
+    {
+      "id": "read_databricks_volume",
+      "value": {
+        "operation": "READ",
+        "customSql": "false",
+        "storage": "databricks",
+        "catalog": "sales",
+        "schema": "dims",
+        "objectType": "volume",
+        "volume": "/Volumes/sales/dims",
+        "path": "residential_types.csv",
+        "format": "csv"
+      }
+    },
+    {
+      "id": "write_databricks_volume",
+      "value": {
+        "operation": "WRITE",
+        "storage": "databricks",
+        "catalog": "sales",
+        "schema": "dims",
+        "objectType": "volume",
+        "volume": "/Volumes/sales/dims",
+        "path": "raw_zone/res_type_data",
+        "format": "parquet",
+        "writeMode": "overwrite"
+      }
+    }
+
+  ],
+  "edges": [
+    {
+      "source": "read_databricks_volume",
+      "target": "write_databricks_volume"
+    }
+
+  ]
+}

@@ -22,11 +22,20 @@ import org.apache.spark.sql.DataFrame
 
 import scala.collection.mutable
 
-class ExecutionData(dependencies: Map[String, Seq[String]]) {
+object StagesState {
+  var stagesToRun: Seq[String] = Seq[String]()
+}
+
+class ExecutionData(var dependencies: Map[String, Seq[String]]) {
   private val stageResults = mutable.Map[String, DataFrame]()
+  var stageStatus: Map[String, StageStatus.Value] = Map[String, StageStatus.Value]()
+  private val failedStatuses = Seq(StageStatus.FAILED, StageStatus.UPSTREAM_FAILED)
   private var currentLayer = 0
 
   def getCurrentLayer: Int = currentLayer
+
+  def updateDependencies(dependencies: Map[String, Seq[String]]): Unit =
+    this.dependencies = dependencies
 
   def getStageInputData(id: String): Map[String, DataFrame] =
     dependencies.getOrElse(id, Nil).map(key => key -> stageResults.apply(key)).toMap
@@ -35,4 +44,10 @@ class ExecutionData(dependencies: Map[String, Seq[String]]) {
     stageResults ++= result
     currentLayer += 1
   }
+
+  def saveStageStatus(status: (String, StageStatus.Value)): Unit =
+    stageStatus += status
+
+  def isUpstreamFailedAny(upstreamStageIds: Seq[String]): Boolean =
+    upstreamStageIds.exists(k => failedStatuses.contains(stageStatus(k)))
 }

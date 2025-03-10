@@ -27,7 +27,7 @@ import org.apache.spark.sql.functions.{col, expr, lit, explode}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.SparkSession
 
-private[function] final class WithColumnStage(val id: String, column: String,
+private[function] final class WithColumnStage(val configNode: Node, column: String,
                                               operationType: String, options: Map[String, String]) extends Stage {
   override val operation: OperationType.Value = OperationType.WITH_COLUMN
   override val inputsRequired: Int = 1
@@ -160,6 +160,6 @@ object WithColumnStageBuilder extends StageBuilder {
     val column = config.value(fieldColumn)
     val operationType = config.value(fieldOperationType)
 
-    new WithColumnStage(config.id, column, operationType, getOptions(config.value))
+    new WithColumnStage(config, column, operationType, getOptions(config.value))
   }
 }

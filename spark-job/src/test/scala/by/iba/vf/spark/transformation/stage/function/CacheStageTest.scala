@@ -35,7 +35,7 @@ class CacheStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodTest
     val df = mock[DataFrame]
     val storageLevel = mock[StorageLevel]
     when(df.persist(storageLevel)).thenReturn(df)
-    val stage = new CacheStage("id", storageLevel)
+    val stage = new CacheStage(Node("id", Map()), storageLevel)
 
     val result = stage invokePrivate PrivateMethod[Option[DataFrame]]('process)(Map("1" -> df), spark)
 
@@ -47,7 +47,7 @@ class CacheStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodTest
     val storageLevel = mock[StorageLevel]
     when(df.persist(storageLevel)).thenReturn(df)
 
-    val stage = new CacheStage("id", storageLevel)
+    val stage = new CacheStage(Node("id", Map()), storageLevel)
     val result = stage.cache(df)
 
     result should be(df)

@@ -1,13 +1,17 @@
 # About Visual Flow
 
-Visual Flow is an ETL tool designed for effective data manipulation via convenient and user-friendly interface. The tool has the following capabilities:
+Visual Flow is an ETL/ELT tool designed for effective data management via convenient and user-friendly interface. The tool has the following capabilities:
 
 - Can integrate data from heterogeneous sources:
+  - Azure Blob Storage
   - AWS S3
   - Cassandra
   - Click House
   - DB2
+  - Databricks JDBC (only in global configuration)
+  - Databricks (only in Databricks configuration)
   - Dataframe (for reading)
+  - Google Cloud Storage
   - Elastic Search
   - IBM COS
   - Kafka
@@ -23,6 +27,8 @@ Visual Flow is an ETL tool designed for effective data manipulation via convenie
 - Perform data processing and transformation
 - Run custom code
 - Leverage metadata for analysis and maintenance
+- Allows to deploy in two configurations and run jobs in Spark/Kubernetes and Databricks environments respectively
+- Leverages Generative AI capabilities via tasks like Parse text, Generate data, Transcribe, Generic task
 
 Visual Flow application is divided into the following repositories: 
 
@@ -51,6 +57,7 @@ This repository contains two types of jobs:
 - Join stage.
 - Change data capture stage.
 - Union stage.
+- AI Text task stage.
 
 For more information on stages check [stage_fields.md](./stage_fields.md)
 

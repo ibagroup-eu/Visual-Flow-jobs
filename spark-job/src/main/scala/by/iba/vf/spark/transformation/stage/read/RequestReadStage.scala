@@ -22,8 +22,8 @@ import by.iba.vf.spark.transformation.config.Node
 import by.iba.vf.spark.transformation.stage.{ReadStageBuilder, RequestStageConfig, Stage, StageBuilder}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
-class RequestReadStage(override val id: String, config: RequestStageConfig, options: Map[String, String])
-  extends ReadStage(id, RequestStageConfig.storageId){
+class RequestReadStage(override val configNode: Node, config: RequestStageConfig, options: Map[String, String])
+  extends ReadStage(configNode, RequestStageConfig.storageId){
 
 
   override def read(implicit spark: SparkSession): DataFrame = {
@@ -53,6 +53,6 @@ object RequestReadStageBuilder extends ReadStageBuilder {
   }
 
   override protected def convert(config: Node): Stage =
-    new RequestReadStage(config.id, new RequestStageConfig(config), getOptions(config.value))
+    new RequestReadStage(config, new RequestStageConfig(config), getOptions(config.value))
 }
 

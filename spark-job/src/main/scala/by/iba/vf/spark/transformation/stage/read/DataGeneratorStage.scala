@@ -25,8 +25,8 @@ import org.apache.spark.sql.{DataFrame, SparkSession}
 
 import java.security.SecureRandom
 
-private[read] final class DataGeneratorStage(override val id: String, alias: String)
-  extends ReadStage(id, DataGeneratorStageBuilder.GeneratorStorage) {
+private[read] final class DataGeneratorStage(override val configNode: Node, alias: String)
+  extends ReadStage(configNode, DataGeneratorStageBuilder.GeneratorStorage) {
 
   override val builder: StageBuilder = DataGeneratorStageBuilder
 
@@ -52,6 +52,6 @@ object DataGeneratorStageBuilder extends StageBuilder {
     val id = config.id
     val alias = config.value(FieldAlias)
 
-    new DataGeneratorStage(id, alias)
+    new DataGeneratorStage(config, alias)
   }
 }

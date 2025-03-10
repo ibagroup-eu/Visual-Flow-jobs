@@ -26,8 +26,8 @@ import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
 import java.sql.{Date, Timestamp}
 
-class DataframeReadStage(override val id: String, config: DataframeStageConfig)
-  extends ReadStage(id, DataframeStageConfig.storageId){
+class DataframeReadStage(override val configNode: Node, config: DataframeStageConfig)
+  extends ReadStage(configNode, DataframeStageConfig.storageId){
 
   override def read(implicit spark: SparkSession): DataFrame = {
     val rdd = spark.sparkContext.makeRDD(typeCasting(config.parseData(), config.parseSchema()))
@@ -87,6 +87,6 @@ object DataframeReadStageBuilder extends ReadStageBuilder {
     config.contains(dataFieldName) && config.contains(schemaFieldName)
 
   override protected def convert(config: Node): Stage = {
-    new DataframeReadStage(config.id, new DataframeStageConfig(config))
+    new DataframeReadStage(config, new DataframeStageConfig(config))
   }
 }

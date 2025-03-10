@@ -29,7 +29,7 @@ class RedisWriteStageTest extends AnyFunSpec with PrivateMethodTester with Mocki
     when(dfWriter.options(Map("table" -> table, "host" -> host,  "auth" -> password, "port" -> port, "ssl" -> "false"))).thenReturn(dfWriter)
     when(dfWriter.mode(saveMode)).thenReturn(dfWriter)
     doNothing.when(dfWriter).save
-    new RedisWriteStage(id, config).write(df)
+    new RedisWriteStage(Node(id, Map()), config).write(df)
   }
 }
 

@@ -4,15 +4,15 @@
 
 1) Make sure that you have the following software installed
 
-| Software                   | Version                                                                       | Purpose                                                                 |
-|----------------------------|-------------------------------------------------------------------------------|-------------------------------------------------------------------------|
-| Java                       | 8                                                                             | To supplement Scala which is used in spark jobs                         |
-| Scala                      | 2.11.12                                                                       | To work with spark jobs                                                 |
-| Maven                      | 3+                                                                            | To manage spark jobs' dependencies                                      |
-| Python                     | 3.8                                                                           | To work with slack jobs                                                 |
-| pip                        | should be built into Python, if not then install the latest version           | To manage slack jobs' dependencies                                      |
-| Spark                      | 2.4.7                                                                         | To run spark jobs                                                       |
-| Kubernetes CLI(optional)   | actual for target cluster                                                     | To be able to run spark and slack jobs in a production-like environment |
+| Software                   | Version                                                             | Purpose                                                                 |
+|----------------------------|---------------------------------------------------------------------|-------------------------------------------------------------------------|
+| Java                       | 11                                                                  | To supplement Scala which is used in spark jobs                         |
+| Scala                      | 2.12.12                                                             | To work with spark jobs                                                 |
+| Maven                      | 3+                                                                  | To manage spark jobs' dependencies                                      |
+| Python                     | 3.8                                                                 | To work with slack jobs                                                 |
+| pip                        | should be built into Python, if not then install the latest version | To manage slack jobs' dependencies                                      |
+| Spark                      | 3.4.1                                                               | To run spark jobs                                                       |
+| Kubernetes CLI(optional)   | actual for target cluster                                           | To be able to run spark and slack jobs in a production-like environment |
 
 2) If you want to run slack jobs(on any environment), make sure that you have these environment variables set
 

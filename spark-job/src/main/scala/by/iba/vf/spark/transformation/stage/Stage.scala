@@ -19,21 +19,39 @@
 package by.iba.vf.spark.transformation.stage
 
 
-import by.iba.vf.spark.transformation.ResultLogger
+import by.iba.vf.spark.transformation.{Metadata, ResultLogger, StageStatus}
 import by.iba.vf.spark.transformation.config.Node
+import by.iba.vf.spark.transformation.stage.mixins.IncrementalLoad
+import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 trait Stage extends ResultLogger {
 
-  val id: String
+  val configNode: Node
+  val id: String = configNode.id
   val operation: OperationType.Value
   val inputsRequired: Int
+  val status: StageStatus.Value = StageStatus.SUCCEEDED
+  val statusMessage: String = "Stage has been successfully completed"
 
   val builder: StageBuilder
 
   def execute(input: Map[String, DataFrame])(implicit spark: SparkSession): Option[DataFrame] = {
     logger.info("Executing stage \"{}\" (operation: {})", id: Any, operation: Any)
     process(input)
+  }
+
+  def deriveMetadata(df: DataFrame): Metadata = {
+    val count: Long = df.count()
+    val schema: StructType = df.schema
+    val samplingFraction: Double = if (20L < count) 20.toDouble / count else 1.0
+    val exemplar: DataFrame = df.sample(samplingFraction)
+
+    logger.info("Total number of rows processed: {}", count)
+    logger.info("Resulting DataFrame schema of the stage {}:\n{}", id: Any, schema.treeString)
+    logger.info("Sampling fraction: {}", samplingFraction)
+
+    Metadata(id, status, statusMessage, count, schema, exemplar, Node(id, Map()))
   }
 
   protected def process(input: Map[String, DataFrame])(implicit spark: SparkSession): Option[DataFrame]
@@ -74,10 +92,10 @@ trait StorageValidator {
 }
 
 
-trait ReadStageBuilder extends StageBuilder with StorageValidator {
+trait ReadStageBuilder extends StageBuilder with StorageValidator with IncrementalLoad {
   override protected def validate(config: Map[String, String]): Boolean = {
     config.get(fieldOperation).contains(OperationType.READ.toString) && validateRead(config) &&
-      validateStorage(config)
+      validateStorage(config) && validateIncrementalLoad(config)
   }
 
   protected def validateRead(config: Map[String, String]): Boolean
@@ -92,5 +110,5 @@ trait WriteStageBuilder extends StageBuilder with StorageValidator {
 }
 
 object OperationType extends Enumeration {
-  val READ, WRITE, JOIN, UNION, GROUP, FILTER, TRANSFORM, SORT, CACHE, CDC, REMOVE_DUPLICATES, SLICE, STRING, VALIDATE, WITH_COLUMN, DATETIME, HANDLE_NULL, PIVOT = Value
+  val READ, WRITE, JOIN, UNION, GROUP, FILTER, TRANSFORM, SORT, CACHE, CDC, REMOVE_DUPLICATES, SLICE, STRING, VALIDATE, WITH_COLUMN, DATETIME, HANDLE_NULL, PIVOT, AI_TEXT_TASK = Value
 }

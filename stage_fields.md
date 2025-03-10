@@ -34,7 +34,7 @@ Each node is stage configured with its own set of input parameters, identified w
   "id": "<id>",
   "value": {
     "operation": "READ",
-    "storage": "<storage>", // supported values: 'db2', 'sqlite'
+    "storage": "<storage>", // supported values: 'db2', 'sqlite', 'oracle', 'mysql', 'postgresql', 'mssql', 'redshift-jdbc'
     "jdbcUrl": "jdbc:<storage>:<parameters>",
     "schema": "<database schema>",
     "table": "<database table name>",
@@ -51,13 +51,15 @@ Each node is stage configured with its own set of input parameters, identified w
   "id": "<id>",
   "value": {
     "operation": "READ",
-    "storage": "<storage>", // supported values: 'cos, 's3'
+    "storage": "<storage>", // supported values: 'cos', 's3', 'azure-blob-storage', 'google-cloud-storage'
     "accessKey": "<access key>", // credentials
     "secretKey": "<secret key>", // credentials
-    "bucket": "<bucket>",
-    "path": "<path>", // path in bucket
-    "format": "<format>", // Spark DataFrame format, e.g. 'csv'
-    "endpoint": "<endpoint>" // only for 'cos'
+    "bucket": "<bucket>", // for 'cos', 's3', 'google-cloud-storage'
+    "container": "<container>", // for 'azure-blob-storage'
+    "path": "<path>", // path in bucket, for 'cos', 's3', 'google-cloud-storage'
+    "containerPath": "<path>", // path in container, for 'azure-blob-storage'
+    "format": "<format>", // Spark DataFrame format, e.g. 'csv', 'parquet', 'json', etc.
+    "endpoint": "<endpoint>" // only for 'cos' and 's3'
   }
 }
 ```
@@ -115,13 +117,15 @@ see *writeMode* values [here](https://spark.apache.org/docs/latest/api/java/org/
   "id": "<id>",
   "value": {
     "operation": "WRITE",
-    "storage": "<storage>", // supported values: 'cos, 's3'
+    "storage": "<storage>", // supported values: 'cos', 's3', 'azure-blob-storage', 'google-cloud-storage'
     "accessKey": "<access key>", // credentials
     "secretKey": "<secret key>", // credentials
-    "bucket": "<bucket>",
-    "path": "<path>", // path in bucket
-    "format": "<format>", // Spark DataFrame format, e.g. 'csv'
-    "endpoint": "<endpoint>", // only for 'cos'
+    "bucket": "<bucket>", // for 'cos', 's3', 'google-cloud-storage'
+    "container": "<container>", // for 'azure-blob-storage'
+    "path": "<path>", // path in bucket, for 'cos', 's3', 'google-cloud-storage'
+    "containerPath": "<path>", // path in container, for 'azure-blob-storage'
+    "format": "<format>", // Spark DataFrame format, e.g. 'csv', 'parquet', 'json', etc.
+    "endpoint": "<endpoint>", // only for 'cos' and 's3'
     "writeMode": "<write mode>" // optional, see details in 'Write JDBC' section
   }
 }
@@ -244,6 +248,29 @@ see available Spark *select* functions [here](https://spark.apache.org/docs/late
   }
 }
 ```
+
+#### AI Text Task - Parse text
+```
+{
+  "id": "<id>",
+  "value": {
+    "operation": "AI_TEXT_TASK",
+    "task": "parseText",
+    "llm": "<LLM>", // 'ChatGPT'
+    "endpoint": "<endpoint>", // 'https://api.openai.com/v1/chat/completions'
+    "model": "<model>", // 'gpt-3.5-turbo'
+    "apiKey": "<api key>",
+    "sourceColumn": "<source column>",
+    "maxTokens": "<max tokens>", // e.g. 1024
+    "temperature": "<temperature>", // e.g. 0.7
+    "systemMessage": "<system message>", // e.g. 'You are client feedback assistant for the airline company'
+    "keepExtraAttributes": "false",
+    "attributes": "<attributes>", // attributes in JSON format encoded in base64
+    "examples": "<examples>" // examples in JSON format encoded in base64
+  }
+}
+```
+other tasks include: Generate Date - generate synthetic data, Transcribe - transcribe speech to text, Generic task - for the rest of use cases
 
 #### Cache
 ```

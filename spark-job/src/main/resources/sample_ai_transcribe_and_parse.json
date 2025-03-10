@@ -1,0 +1,109 @@
+{
+  "nodes": [
+    {
+      "id": "read1",
+      "value": {
+        "operation": "READ",
+        "storage": "s3",
+        "endpoint": "s3.amazonaws.com",
+        "ssl": "false",
+        "accessKey": "",
+        "secretKey": "",
+        "bucket": "vf-demo-data-lake",
+        "path": "demo-audio",
+        "format": "binaryFile",
+        "binaryFormat": "mp3",
+        "outputContentColumn": "PARSED_CONTENT",
+        "outputPathColumn": "PATH",
+        "anonymousAccess": "false"
+      }
+    },
+    {
+      "id": "gen-ai-transcribe",
+      "value": {
+        "operation": "AI_TEXT_TASK",
+        "task": "transcribe",
+        "llm": "ChatGPT",
+        "endpoint": "https://api.openai.com/v1/audio/transcriptions",
+        "model": "whisper-1",
+        "apiKey": "",
+        "sourceColumn": "PARSED_CONTENT",
+        "pathColumn": "PATH",
+        "outputColumn": "TRANSCRIBED_TEXT",
+        "temperature": "0.7"
+      }
+    },
+    {
+      "id": "gen-ai-parse",
+      "value": {
+        "operation": "AI_TEXT_TASK",
+        "task": "parseText",
+        "llm": "ChatGPT",
+        "endpoint": "https://api.openai.com/v1/chat/completions",
+        "model": "gpt-3.5-turbo",
+        "apiKey": "",
+        "sourceColumn": "TRANSCRIBED_TEXT",
+        "maxTokens": "1024",
+        "temperature": "0.7",
+        "systemMessage": "You are client feedback assistant for the airline company. If you can't detect origin country try to get it by origin city as much as possible that is most known for this city. If you can't detect destination country try to get it by destination city as much as possible that is most known for this city.",
+        "keepExtraAttributes": "false",
+        "attributes": "eyJhdHRyaWJ1dGVzIjpbeyJuYW1lIjoiT1JJR0lOX0NPVU5UUlkiLCJkZWZpbml0aW9uIjoiQ291bnRyeSBvZiB0aGUgZmxpZ2h0IG9yaWdpbiIsInBsYWNlaG9sZGVyIjoiTm8gY291bnRyeSIsImNvbmZpZGVuY2VUaHJlc2hvbGQiOiIwLjUifSx7Im5hbWUiOiJPUklHSU5fQ0lUWSIsImRlZmluaXRpb24iOiJDaXR5IG9mIHRoZSBmbGlnaHQgb3JpZ2luIiwicGxhY2Vob2xkZXIiOiJObyBjaXR5IiwiY29uZmlkZW5jZVRocmVzaG9sZCI6IjAuNSJ9LHsibmFtZSI6IkRFU1RJTkFUSU9OX0NPVU5UUlkiLCJkZWZpbml0aW9uIjoiQ291bnRyeSBvZiB0aGUgZmxpZ2h0IGRlc3RpbmF0aW9uIiwicGxhY2Vob2xkZXIiOiJVTkRFRklORUQiLCJjb25maWRlbmNlVGhyZXNob2xkIjoiMC41In0seyJuYW1lIjoiREVTVElOQVRJT05fQ0lUWSIsImRlZmluaXRpb24iOiJDaXR5IG9mIHRoZSBmbGlnaHQgZGVzdGluYXRpb24iLCJwbGFjZWhvbGRlciI6IlVOREVGSU5FRCIsImNvbmZpZGVuY2VUaHJlc2hvbGQiOiIwLjUifSx7Im5hbWUiOiJTVVBQT1JUX1NQRUNJQUxJU1QiLCJkZWZpbml0aW9uIjoiU3VwcG9ydCBzcGVjaWFsaXN0IG5hbWUgKEZpcnN0IE5hbWUgJiBMYXN0IE5hbWUpIiwicGxhY2Vob2xkZXIiOiJOb3QgcHJvdmlkZWQiLCJjb25maWRlbmNlVGhyZXNob2xkIjoiMC41In0seyJuYW1lIjoiU0VOVElNRU5UX1RZUEUiLCJkZWZpbml0aW9uIjoiU2VudGltZW50IHR5cGUsIG9uZSBvZiB0aGUgdmFsdWVzOiBwb3NpdGl2ZSwgbmVnYXRpdmUsIG5ldXRyYWwiLCJwbGFjZWhvbGRlciI6IldpdGhvdXQgc2VudGltZW50IiwiY29uZmlkZW5jZVRocmVzaG9sZCI6IjAuNSJ9LHsibmFtZSI6IlNFTlRJTUVOVF9SRUFTT04iLCJkZWZpbml0aW9uIjoiU2VudGltZW50IHJlYXNvbiwgb3IgcmVhc29uIG9mIHRoZSBjbGllbnQgZmVlZGJhY2siLCJwbGFjZWhvbGRlciI6Ik4vQSIsImNvbmZpZGVuY2VUaHJlc2hvbGQiOiIwLjUifSx7Im5hbWUiOiJST09UX0NBVVNFIiwiZGVmaW5pdGlvbiI6IlRoZSByb290IGNhdXNlIG9mIHRoZSBjbGllbnQgZmVlZGJhY2siLCJwbGFjZWhvbGRlciI6Ik5PIiwiY29uZmlkZW5jZVRocmVzaG9sZCI6IjAuNSJ9XX0K",
+        "examples": "eyJleGFtcGxlcyI6W3sidXNlciI6Ik15IGZsaWdodCBmcm9tIFNvZmlhIHRvIFN0b2NraG9sbSB3YXMgZGVsYXllZCBmb3IgOCBob3VycyBkdWUgdG8gdGhlIHNub3dmYWxsIGluIEhlbHNpbmtpISEgQW5kIEkgaGFkIHRvIHdhaXQgaW4gdGhhdCBhaXJwb3J0IG9mIEtyYWtvdyEgU3VwcG9ydCBzcGVjaWFsaXN0IEpvaG4gRG9lIGRpZCBub3Qgc3VnZ2VzdCBtZSBhbHRlcm5hdGl2ZSBmbGlnaHRzISBJIGFtIHZlcnkgZGlzYXBwb2ludGVkIHdpdGggdGhlIGNvbXBhbnkgYW5kIHRoZSBxdWFsaXR5IG9mIHN1cHBvcnQhISIsImFzc2lzdGFudCI6ImV5SlBVa2xIU1U1ZlEwOVZUbFJTV1NJNklrSjFiR2RoY21saElpd2lUMUpKUjBsT1gwTkpWRmtpT2lKVGIyWnBZU0lzSWtSRlUxUkpUa0ZVU1U5T1gwTlBWVTVVVWxraU9pSlRkMlZrWlc0aUxDSkVSVk5VU1U1QlZFbFBUbDlEU1ZSWklqb2lVM1J2WTJ0b2IyeHRJaXdpVTFWUVVFOVNWRjlUVUVWRFNVRk1TVk5VSWpvaVNtOW9iaUJFYjJVaUxDSlRSVTVVU1UxRlRsUmZWRmxRUlNJNklrNWxaMkYwYVhabElpd2lVMFZPVkVsTlJVNVVYMUpGUVZOUFRpSTZJa1pzYVdkb2RDQmtaV3hoZVNJc0lsSlBUMVJmUTBGVlUwVWlPaUpUYm05M1ptRnNiQ0o5Q2c9PSJ9XX0K"
+      }
+    },
+    {
+      "id": "rename-content-column",
+      "value": {
+        "operation": "WITH_COLUMN",
+        "name": "rename-content-column",
+        "operationType": "renameColumn",
+        "column": "TRANSCRIBED_TEXT",
+        "option.columnName": "VALUE"
+      }
+    },
+    {
+      "id": "drop-path-column",
+      "value": {
+        "operation": "SLICE",
+        "name": "drop-path-column",
+        "mode": "Drop",
+        "columns": "PATH"
+      }
+    },
+    {
+      "id": "write1",
+      "value": {
+        "operation": "WRITE",
+        "jdbcUrl": "jdbc:postgresql://okd4w1.okd.gomel.iba.by:31433/example",
+        "storage": "postgresql",
+        "schema": "public",
+        "table": "USER_REVIEWS",
+        "writeMode": "append",
+        "user": "postgres",
+        "password": ""
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "read1",
+      "target": "gen-ai-transcribe"
+    },
+    {
+      "source": "gen-ai-transcribe",
+      "target": "gen-ai-parse"
+    },
+    {
+      "source": "gen-ai-parse",
+      "target": "rename-content-column"
+    },
+    {
+      "source": "rename-content-column",
+      "target": "drop-path-column"
+    },
+    {
+      "source": "drop-path-column",
+      "target": "write1"
+    }
+  ]
+}

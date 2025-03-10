@@ -37,7 +37,7 @@ class TransformStageTest extends AnyFunSpec with MockitoSugar with PrivateMethod
 
     when(spark.sql(s"select $selectStmt from tmpTable")).thenReturn(df2)
     when(spark.sql("drop view tmpTable")).thenReturn(df2)
-    val stage = new TransformStage("id", selectStmt, TransformationMode.Simple, None)
+    val stage = new TransformStage(Node("id", Map()), selectStmt, TransformationMode.Simple, None)
 
     val result = stage invokePrivate PrivateMethod[Option[DataFrame]]('process)(Map("1" -> df), spark)
 
@@ -56,7 +56,7 @@ class TransformStageTest extends AnyFunSpec with MockitoSugar with PrivateMethod
 
     when(spark.sql(selectStmt)).thenReturn(df2)
     when(spark.sql(s"drop view $tableName")).thenReturn(df2)
-    val stage = new TransformStage("id", selectStmt, TransformationMode.Full_SQL, Some(tableName))
+    val stage = new TransformStage(Node("id", Map()), selectStmt, TransformationMode.Full_SQL, Some(tableName))
 
     val result = stage invokePrivate PrivateMethod[Option[DataFrame]]('process)(Map("1" -> df), spark)
 

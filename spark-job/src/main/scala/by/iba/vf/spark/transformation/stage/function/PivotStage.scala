@@ -27,7 +27,7 @@ import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.{col, expr}
 
-private[function] final class PivotStage(val id: String, operationType: String, options: Map[String, String]) extends Stage {
+private[function] final class PivotStage(val configNode: Node, operationType: String, options: Map[String, String]) extends Stage {
   override val operation: OperationType.Value = OperationType.PIVOT
   override val inputsRequired: Int = 1
   override val builder: StageBuilder = PivotStageBuilder
@@ -78,6 +78,6 @@ object PivotStageBuilder extends StageBuilder {
   override protected def convert(config: Node): Stage = {
     val operationType = config.value(FieldOperationType)
 
-    new PivotStage(config.id, operationType, getOptions(config.value))
+    new PivotStage(config, operationType, getOptions(config.value))
   }
 }

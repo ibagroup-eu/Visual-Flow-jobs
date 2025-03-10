@@ -18,7 +18,8 @@
  */
 package by.iba.vf.spark.transformation.stage.write
 
-import by.iba.vf.spark.transformation.stage.COSConfig
+import by.iba.vf.spark.transformation.config.Node
+import by.iba.vf.spark.transformation.stage.config.objectstores.COSConfig
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.DataFrameWriter
 import org.apache.spark.sql.Row
@@ -33,11 +34,11 @@ class ObjectStorageWriteStageTest extends AnyFunSpec with PrivateMethodTester wi
     val df = mock[DataFrame]
     val dfWriter = mock[DataFrameWriter[Row]]
     val spark = mock[SparkSession]
-    val stage = new ObjectStorageWriteStage("id1", ObjectStorageWriteCOSStageBuilder, cosConfig, Map(), "cos_storage")
+    val stage = new ObjectStorageWriteStage(Node("id1", Map()), ObjectStorageWriteCOSStageBuilder, cosConfig, Map(), "cos_storage")
 
     when(dfWriter.options(Map[String, String]())).thenReturn(dfWriter)
     when(cosConfig.saveMode).thenReturn(Some("overwrite"))
-    when(cosConfig.format).thenReturn("csv")
+    when(cosConfig.format).thenReturn(Some("csv"))
     when(cosConfig.connectPath).thenReturn("cp")
     doNothing.when(cosConfig).setConfig(spark)
     when(cosConfig.addPartitions(dfWriter)).thenReturn(dfWriter)
@@ -56,11 +57,11 @@ class ObjectStorageWriteStageTest extends AnyFunSpec with PrivateMethodTester wi
     val dfWriter = mock[DataFrameWriter[Row]]
     val spark = mock[SparkSession]
     val optionsMap = Map("a" -> "b", "b" -> "c")
-    val stage = new ObjectStorageWriteStage("id1", ObjectStorageWriteS3StageBuilder, cosConfig, optionsMap, "s3_storage")
+    val stage = new ObjectStorageWriteStage(Node("id1", Map()), ObjectStorageWriteS3StageBuilder, cosConfig, optionsMap, "s3_storage")
 
     when(dfWriter.options(optionsMap)).thenReturn(dfWriter)
     when(cosConfig.saveMode).thenReturn(None)
-    when(cosConfig.format).thenReturn("csv")
+    when(cosConfig.format).thenReturn(Some("csv"))
     when(cosConfig.connectPath).thenReturn("cp")
     doNothing.when(cosConfig).setConfig(spark)
     when(cosConfig.addPartitions(dfWriter)).thenReturn(dfWriter)

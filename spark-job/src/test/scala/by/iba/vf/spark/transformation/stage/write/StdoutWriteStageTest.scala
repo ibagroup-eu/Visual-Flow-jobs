@@ -36,7 +36,7 @@ class StdoutWriteStageTest extends AnyFunSpec with PrivateMethodTester with Mock
     doNothing.when(df).show(10, truncate = false)
     when(df.count()).thenReturn(1)
 
-    val stage = new StdoutWriteStage("id", 10)
+    val stage = new StdoutWriteStage(Node("id", Map()), 10)
 
     noException should be thrownBy stage.write(df)
   }

@@ -43,7 +43,7 @@ class DataframeReadStageTest extends AnyFunSpec with MockitoSugar {
 
     val config = new DataframeStageConfig(Node(id, conf))
 
-    val stage = new DataframeReadStage(id, config)
+    val stage = new DataframeReadStage(Node(id, Map()), config)
 
     val df = mock[DataFrame]
     val rdd = mock[RDD[Row]]

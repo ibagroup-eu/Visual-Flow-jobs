@@ -19,33 +19,50 @@
 package by.iba.vf.spark.transformation.stage.read
 
 import by.iba.vf.spark.transformation.config.Node
-import by.iba.vf.spark.transformation.stage.COSConfig
-import by.iba.vf.spark.transformation.stage.BaseStorageConfig
 import by.iba.vf.spark.transformation.stage.ReadStageBuilder
-import by.iba.vf.spark.transformation.stage.S3Config
 import by.iba.vf.spark.transformation.stage.Stage
 import by.iba.vf.spark.transformation.stage.StageBuilder
+import by.iba.vf.spark.transformation.stage.config.objectstores.{AzureBlobStorageStageConfig, BaseStorageConfig, COSConfig, GoogleCloudStorageStageConfig, S3Config}
+import by.iba.vf.spark.transformation.utils.BinaryUtils
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions.{col, lit, max}
 
 class ObjectStorageReadStage(
-                    override val id: String,
+                    override val configNode: Node,
                     override val builder: StageBuilder,
                     conf: BaseStorageConfig,
                     var options: Map[String, String],
                     cosStorage: String
-) extends ReadStage (id, cosStorage) {
+) extends ReadStage (configNode, cosStorage) {
   override def read(implicit spark: SparkSession): DataFrame = {
     conf.setConfig(spark)
 
-    if (conf.format == "avro" && !conf.useSchema)
+    val format = conf.format.getOrElse("parquet")
+
+    if (format == "avro" && !conf.useSchema)
       options = options.filter(elem => elem._1 != "avroSchema")
 
-    spark.read
+    var df = spark.read
       .options(options)
-      .format(conf.format)
+      .format(conf.format.getOrElse("parquet"))
       .load(conf.connectPath)
+
+    if (format == "binaryFile") {
+      if (List("pdf", "doc", "docx").contains(options("binaryFormat")))
+        df = BinaryUtils.process(spark, options("binaryFormat"), df)
+
+      df = df
+        .withColumnsRenamed(Map(
+          "path" -> options("outputPathColumn"),
+          "content" -> options("outputContentColumn")
+        ))
+        .select(options("outputPathColumn"), options("outputContentColumn"))
+    }
+
+    df
   }
+
 }
 
 object ObjectStorageReadCOSStageBuilder extends ReadStageBuilder {
@@ -55,7 +72,7 @@ object ObjectStorageReadCOSStageBuilder extends ReadStageBuilder {
     COSConfig.validate(config)
 
   override protected def convert(config: Node): Stage =
-    new ObjectStorageReadStage(config.id, this, new COSConfig(config), getOptions(config.value), COSConfig.cosStorage)
+    new ObjectStorageReadStage(config, this, new COSConfig(config), getOptions(config.value), COSConfig.cosStorage)
 }
 
 object ObjectStorageReadS3StageBuilder extends ReadStageBuilder {
@@ -64,6 +81,32 @@ object ObjectStorageReadS3StageBuilder extends ReadStageBuilder {
   override protected def validateRead(config: Map[String, String]): Boolean =
     S3Config.validate(config)
 
-  override protected def convert(config: Node): Stage =
-    new ObjectStorageReadStage(config.id, this, new S3Config(config), getOptions(config.value), S3Config.cosStorage)
+  override protected def convert(config: Node): Stage = {
+    val s3Config = new S3Config(config)
+    new ObjectStorageReadStage(config, this, s3Config, getOptions(config.value) ++ s3Config.options, S3Config.cosStorage)
+  }
+}
+
+object AzureBlobStorageReadStageBuilder extends ReadStageBuilder {
+  override def expectedStorage: String = AzureBlobStorageStageConfig.storageId
+
+  override protected def validateRead(config: Map[String, String]): Boolean =
+    AzureBlobStorageStageConfig.validate(config)
+
+  override protected def convert(config: Node): Stage = {
+    val azureConfig = new AzureBlobStorageStageConfig(config)
+    new ObjectStorageReadStage(config, this, azureConfig, azureConfig.options ++ getOptions(config.value), AzureBlobStorageStageConfig.storageId)
+  }
+}
+
+object GoogleCloudStorageReadStageBuilder extends ReadStageBuilder {
+  override def expectedStorage: String = GoogleCloudStorageStageConfig.storageId
+
+  override protected def validateRead(config: Map[String, String]): Boolean =
+    GoogleCloudStorageStageConfig.validate(config)
+
+  override protected def convert(config: Node): Stage = {
+    val gcpConfig = new GoogleCloudStorageStageConfig(config)
+    new ObjectStorageReadStage(config, this, gcpConfig, gcpConfig.options ++ getOptions(config.value), GoogleCloudStorageStageConfig.storageId)
+  }
 }

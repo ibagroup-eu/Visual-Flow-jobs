@@ -43,12 +43,14 @@ class JdbcReadStageTest extends AnyFunSpec with PrivateMethodTester with Mockito
     val password = "password"
     val query = schemaTable
     val driver = "com.ibm.db2.jcc.DB2Driver"
+    val numPartitions = "5"
     val config = Map(
       JDBCOptions.JDBC_URL -> jdbcUrl,
       "user" -> user,
       "password" -> password,
       JDBCOptions.JDBC_DRIVER_CLASS -> driver,
-      JDBCOptions.JDBC_TABLE_NAME -> query
+      JDBCOptions.JDBC_TABLE_NAME -> query,
+      JDBCOptions.JDBC_NUM_PARTITIONS -> numPartitions
     )
     val dfReader = mock[DataFrameReader]
     val context = mock[SparkContext]
@@ -62,7 +64,7 @@ class JdbcReadStageTest extends AnyFunSpec with PrivateMethodTester with Mockito
     doNothing.when(context).addFile("jdbc-source-truststore.jks")
 
     val optionsMap: Map[String, String] = Map.empty
-    val stage = new JdbcReadStage(id, schemaTable, Some("jdbc-source-truststore.jks"), config, optionsMap, false)
+    val stage = new JdbcReadStage(Node(id, Map()), schemaTable, Some("jdbc-source-truststore.jks"), config, optionsMap, false)
     val result = stage.read
 
     result should be(df)
@@ -80,7 +82,8 @@ class JdbcReadStageBuilderTest extends AnyFunSpec with PrivateMethodTester with 
       "password" -> "test",
       "schema" -> "SCHEMA",
       "table" -> "TABLE",
-      "customSql" -> "false"
+      "customSql" -> "false",
+      "numPartitions" -> "5"
     )
     val result = JdbcReadStageBuilder invokePrivate PrivateMethod[Boolean]('validate)(config)
     result should be(true)
@@ -98,7 +101,8 @@ class JdbcReadStageBuilderTest extends AnyFunSpec with PrivateMethodTester with 
           "password" -> "test",
           "schema" -> "SCHEMA",
           "table" -> "TABLE",
-          "customSql" -> "false"
+          "customSql" -> "false",
+          "numPartitions" -> "5"
         )
       )
 
@@ -118,7 +122,8 @@ class JdbcReadStageBuilderTest extends AnyFunSpec with PrivateMethodTester with 
           "certData" -> "",
           "schema" -> "SCHEMA",
           "table" -> "TABLE",
-          "customSql" -> "false"
+          "customSql" -> "false",
+          "numPartitions" -> "5"
         )
       )
 

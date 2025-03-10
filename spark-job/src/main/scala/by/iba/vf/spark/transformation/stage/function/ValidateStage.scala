@@ -30,7 +30,7 @@ import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.SparkSession
 
 
-private[function] final class ValidateStage(val id: String, validateConfig: List[Map[String,String]], isError: Boolean) extends Stage {
+private[function] final class ValidateStage(val configNode: Node, validateConfig: List[Map[String,String]], isError: Boolean) extends Stage {
   override val operation: OperationType.Value = OperationType.VALIDATE
   override val inputsRequired: Int = 1
   override val builder: StageBuilder = ValidateStageBuilder
@@ -164,7 +164,7 @@ object ValidateStageBuilder extends StageBuilder {
     val validateConfig = config.value(fieldValidateConfig)
     val isError = config.value.getOrElse(fieldIsError, "true").toBoolean
 
-    new ValidateStage(config.id, parseValidateConfig(validateConfig), isError)
+    new ValidateStage(config, parseValidateConfig(validateConfig), isError)
   }
 }
 

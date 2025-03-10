@@ -1,0 +1,47 @@
+{
+  "nodes": [
+    {
+      "id": "read1",
+      "value": {
+        "operation": "READ",
+        "storage": "google-cloud-storage",
+        "bucket": "vf-demo-data-lake",
+        "path": "geography_dim",
+        "pathToKeyFile": "",
+        "format": "parquet"
+      }
+    },
+    {
+      "id": "filter",
+      "value": {
+        "operation": "FILTER",
+        "name": "filter",
+        "condition": "state_id <> 'WA'"
+      }
+    },
+    {
+      "id": "write1",
+      "value": {
+        "operation": "WRITE",
+        "storage": "google-cloud-storage",
+        "bucket": "vf-demo-data-lake",
+        "path": "geography_dim_copy",
+        "pathToKeyFile": "",
+        "format": "parquet",
+        "partitionBy": "state_id",
+        "writeMode": "overwrite"
+      }
+    }
+
+  ],
+  "edges": [
+    {
+      "source": "read1",
+      "target": "filter"
+    },
+    {
+      "source": "filter",
+      "target": "write1"
+    }
+  ]
+}

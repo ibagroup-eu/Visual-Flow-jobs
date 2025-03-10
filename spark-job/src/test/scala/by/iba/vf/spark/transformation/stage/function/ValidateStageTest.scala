@@ -90,7 +90,7 @@ class ValidateStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodT
         when(df.dropDuplicates("a".split(","))).thenReturn(res_df)
       }
 
-      val stage = new ValidateStage("id", mapVector(i), false)
+      val stage = new ValidateStage(Node("id", Map()), mapVector(i), false)
       val result = stage invokePrivate PrivateMethod[Option[DataFrame]]('process)(Map("1" -> df), spark)
       result should be (Some(df))
     }
@@ -100,7 +100,7 @@ class ValidateStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodT
       val res_df = if (j == 0) df else df2
       when(df.dropDuplicates("a,b".split(","))).thenReturn(res_df)
 
-      val stage = new ValidateStage("id", List(Map("column" -> "a,b", "validations" -> "[{\"type\": \"uniqueness\"}]")), false)
+      val stage = new ValidateStage(Node("id", Map()), List(Map("column" -> "a,b", "validations" -> "[{\"type\": \"uniqueness\"}]")), false)
       val result = stage invokePrivate PrivateMethod[Option[DataFrame]]('process)(Map("1" -> df), spark)
       result should be (Some(df))
     }
@@ -166,7 +166,7 @@ class ValidateStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodT
         when(df.dropDuplicates("a".split(","))).thenReturn(res_df)
       }
 
-      val stage = new ValidateStage("id", mapVector(i), false)
+      val stage = new ValidateStage(Node("id", Map()), mapVector(i), false)
       val result = operationVector(i) match {
         case "dataType" => stage.dataType(df, "a", "string")
         case "minValue" => stage.minValue(df, "a", "1")
@@ -187,7 +187,7 @@ class ValidateStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodT
       val res_df = if (j == 0) df else df2
       when(df.dropDuplicates("a,b".split(","))).thenReturn(res_df)
 
-      val stage = new ValidateStage("id", List(Map("column" -> "a,b", "validations" -> "[{\"type\": \"uniqueness\"}]")), false)
+      val stage = new ValidateStage(Node("id", Map()), List(Map("column" -> "a,b", "validations" -> "[{\"type\": \"uniqueness\"}]")), false)
       val result = stage.uniqueness(df, "a,b")
       result should be ()
     }

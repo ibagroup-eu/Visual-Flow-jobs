@@ -23,9 +23,9 @@ import by.iba.vf.spark.transformation.stage.{CassandraStageConfig, ReadStageBuil
 import org.apache.spark.sql.cassandra.DataFrameReaderWrapper
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
-private[read] final class CassandraReadStage(override val id: String,
+private[read] final class CassandraReadStage(override val configNode: Node,
                                              cassandraStageConfig: CassandraStageConfig,
-                                            ) extends ReadStage(id, CassandraStageConfig.storageId) {
+                                            ) extends ReadStage(configNode, CassandraStageConfig.storageId) {
   override def read(implicit spark: SparkSession): DataFrame = {
     cassandraStageConfig.applyConfig(spark)
     spark.read.cassandraFormat(cassandraStageConfig.table, cassandraStageConfig.keyspace, cassandraStageConfig.cluster.getOrElse(""), cassandraStageConfig.pushdownEnabled).load
@@ -42,6 +42,6 @@ object CassandraReadStageBuilder extends ReadStageBuilder {
 
   override protected def convert(config: Node): Stage = {
     val cassandraConfig = new CassandraStageConfig(config)
-    new CassandraReadStage(config.id, cassandraConfig)
+    new CassandraReadStage(config, cassandraConfig)
   }
 }

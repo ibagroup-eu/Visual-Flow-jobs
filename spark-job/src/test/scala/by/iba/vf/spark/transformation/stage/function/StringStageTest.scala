@@ -305,7 +305,7 @@ class StringStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodTes
         when(df.withColumn(getOptions(config)("targetColumn"), upper(col(getOptions(config)("sourceColumn")))))
           .thenReturn(df2)
 
-      val stage = new StringStage("id", config("function"), getOptions(config))
+      val stage = new StringStage(Node("id", Map()), config("function"), getOptions(config))
       val result = stage invokePrivate PrivateMethod[Option[DataFrame]]('process)(Map("1" -> df), spark)
       result should be(Some(df2))
     }

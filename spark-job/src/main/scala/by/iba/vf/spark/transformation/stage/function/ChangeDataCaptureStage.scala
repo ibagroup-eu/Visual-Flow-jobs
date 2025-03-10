@@ -22,6 +22,7 @@ import by.iba.vf.spark.transformation.config.Node
 import by.iba.vf.spark.transformation.stage.{OperationType, Stage, StageBuilder}
 import org.apache.spark.sql.types.{IntegerType, StructField, StructType}
 import org.apache.spark.sql.{Column, DataFrame, Row, SparkSession}
+import java.util.UUID.randomUUID
 
 private object ChangeDataCaptureStage {
   private val OpNoChanges = 0
@@ -31,7 +32,7 @@ private object ChangeDataCaptureStage {
 }
 
 private[function] class ChangeDataCaptureStage(
-                                                val id: String,
+                                                val configNode: Node,
                                                 keyColumns: Seq[String],
                                                 newDataset: String,
                                                 oldDataset: String,
@@ -48,8 +49,11 @@ private[function] class ChangeDataCaptureStage(
   def changeDataCapture(newDF: DataFrame, oldDF: DataFrame)(implicit spark: SparkSession): DataFrame = {
     val columns: Seq[Column] = keyColumns.map(new Column(_))
 
-    val oldDFOrdered = oldDF.orderBy(columns: _*)
-    val newDFOrdered = newDF.orderBy(columns: _*)
+    val KEY_COLUMN_PLACEHOLDER = randomUUID.toString
+    val NULL_VALUE_PLACEHOLDER = randomUUID.toString
+
+    val oldDFOrdered = oldDF.orderBy(columns: _*).withColumn(KEY_COLUMN_PLACEHOLDER, columns.head)
+    val newDFOrdered = newDF.orderBy(columns: _*).withColumn(KEY_COLUMN_PLACEHOLDER, columns.head)
 
     val newStartIdx = keyColumns.length
     val oldStartIdx = newDFOrdered.schema.length
@@ -78,13 +82,19 @@ private[function] class ChangeDataCaptureStage(
     }
     val rowsRdd = initialRowsRdd
       .map {
-        case (keyColumns: Seq[Any], Seq(null, _*), oldData: Seq[Any]) =>
+        case (keyColumns: Seq[Any], _ :+ null, oldData: Seq[Any]) =>
           keyColumns ++ oldData :+ ChangeDataCaptureStage.OpDelete
-        case (keyColumns: Seq[Any], newData: Seq[Any], Seq(null, _*)) =>
+        case (keyColumns: Seq[Any], newData: Seq[Any], _ :+ null) =>
           keyColumns ++ newData :+ ChangeDataCaptureStage.OpInsert
         case (keyColumns: Seq[Any], newData: Seq[Any], oldData: Seq[Any]) =>
-          val newDataSortedSeq = newData.map(_.toString).sorted
-          val oldDataSortedSeq = oldData.map(_.toString).sorted
+          val newDataSortedSeq = newData.map {
+            case null => NULL_VALUE_PLACEHOLDER
+            case value => value.toString
+          }.sorted
+          val oldDataSortedSeq = oldData.map {
+            case null => NULL_VALUE_PLACEHOLDER
+            case value => value.toString
+          }.sorted
           if (newDataSortedSeq != oldDataSortedSeq) {
             keyColumns ++ newData :+ ChangeDataCaptureStage.OpUpdate
           } else {
@@ -94,7 +104,7 @@ private[function] class ChangeDataCaptureStage(
       .filter(_.nonEmpty)
       .map(Row.fromSeq)
 
-    spark.createDataFrame(rowsRdd, StructType(resultFields))
+    spark.createDataFrame(rowsRdd, StructType(resultFields)).drop(KEY_COLUMN_PLACEHOLDER)
   }
 }
 
@@ -113,7 +123,7 @@ object ChangeDataCaptureStageBuilder extends StageBuilder {
 
   override protected def convert(config: Node): Stage =
     new ChangeDataCaptureStage(
-      config.id,
+      config,
       config.value(FieldKeyColumns).split(",").map(_.trim),
       config.value(FieldNewDataset),
       config.value(FieldOldDataset),

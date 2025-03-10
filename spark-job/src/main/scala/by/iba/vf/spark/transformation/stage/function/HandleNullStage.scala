@@ -25,7 +25,7 @@ import org.apache.spark.ml.feature.Imputer
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.functions.{col, min}
 
-private[function] final class HandleNullStage(val id: String, mode: HandleNullType.Value, options: Map[String, String]) extends Stage {
+private[function] final class HandleNullStage(val configNode: Node, mode: HandleNullType.Value, options: Map[String, String]) extends Stage {
   override val operation: OperationType.Value = OperationType.HANDLE_NULL
   override val inputsRequired: Int = 1
   override val builder: StageBuilder = HandleNullStageBuilder
@@ -101,7 +101,7 @@ object HandleNullStageBuilder extends StageBuilder {
 
   override protected def convert(config: Node): Stage = {
     val mode: HandleNullType.Value = HandleNullType.withName(config.value(fieldMode).toUpperCase)
-    new HandleNullStage(config.id, mode, getOptions(config.value))
+    new HandleNullStage(config, mode, getOptions(config.value))
   }
 }
 

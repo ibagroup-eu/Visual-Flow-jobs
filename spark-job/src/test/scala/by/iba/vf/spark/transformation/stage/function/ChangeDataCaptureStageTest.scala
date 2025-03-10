@@ -36,7 +36,7 @@ class ChangeDataCaptureStageTest extends AnyFunSpec with MockitoSugar with Priva
     val newDF = Seq((1, 2), (5, 6), (8, 9)).toDF("a", "b")
     val oldDF = Seq((1, 2), (3, 4), (5, 7)).toDF("a", "b")
     val expected = Seq((3, 4, 2), (5, 6, 3), (8, 9, 1)).toDF("a", "b", "operation")
-    val stage = new ChangeDataCaptureStage("id", Seq("a"), "1", "2", false)
+    val stage = new ChangeDataCaptureStage(Node("id", Map()), Seq("a"), "1", "2", false)
 
     val result = stage invokePrivate PrivateMethod[Option[DataFrame]]('process)(Map("1" -> newDF, "2" -> oldDF), spark)
 
@@ -47,7 +47,7 @@ class ChangeDataCaptureStageTest extends AnyFunSpec with MockitoSugar with Priva
     val newDF = Seq((1, 2), (5, 6), (8, 9)).toDF("a", "b")
     val oldDF = Seq((1, 2), (3, 4), (5, 7)).toDF("a", "b")
     val expected = Seq((1, 2, 0), (3, 4, 2), (5, 6, 3), (8, 9, 1)).toDF("a", "b", "operation")
-    val stage = new ChangeDataCaptureStage("id", Seq("a"), "1", "2", true)
+    val stage = new ChangeDataCaptureStage(Node("id", Map()), Seq("a"), "1", "2", true)
 
     val result = stage invokePrivate PrivateMethod[Option[DataFrame]]('process)(Map("1" -> newDF, "2" -> oldDF), spark)
 

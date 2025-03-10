@@ -1,0 +1,55 @@
+{
+  "nodes": [
+    {
+      "id": "read1",
+      "value": {
+        "operation": "READ",
+        "storage": "s3",
+        "endpoint": "s3.amazonaws.com",
+        "ssl": "false",
+        "accessKey": "",
+        "secretKey": "",
+        "bucket": "vf-demo-data-lake",
+        "path": "geography_dim",
+        "format": "parquet",
+        "anonymousAccess": "false"
+      }
+    },
+    {
+      "id": "filter",
+      "value": {
+        "operation": "FILTER",
+        "name": "filter",
+        "condition": "state_id <> 'WA'"
+      }
+    },
+    {
+      "id": "write1",
+      "value": {
+        "operation": "WRITE",
+        "storage": "s3",
+        "endpoint": "s3.amazonaws.com",
+        "ssl": "false",
+        "accessKey": "",
+        "secretKey": "",
+        "bucket": "vf-demo-data-lake",
+        "path": "geography_dim_copy",
+        "format": "parquet",
+        "partitionBy": "state_id",
+        "anonymousAccess": "false",
+        "writeMode": "overwrite"
+      }
+    }
+
+  ],
+  "edges": [
+    {
+      "source": "read1",
+      "target": "filter"
+    },
+    {
+      "source": "filter",
+      "target": "write1"
+    }
+  ]
+}

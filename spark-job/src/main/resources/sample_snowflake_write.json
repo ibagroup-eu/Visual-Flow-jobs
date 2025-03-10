@@ -1,0 +1,33 @@
+{
+  "nodes": [
+    {
+      "id": "gen-table1",
+      "value": {
+        "operation": "READ",
+        "storage": "GENERATOR",
+        "alias": "left"
+      }
+    },
+    {
+      "id": "write1",
+      "value": {
+        "operation": "WRITE",
+        "storage": "snowflake",
+        "sfURL": "",
+        "sfUser": "",
+        "sfPassword": "",
+        "sfDatabase": "",
+        "sfSchema": "",
+        "sfWarehouse": "",
+        "sfRole": "",
+        "dbtable": ""
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "gen-table1",
+      "target": "write1"
+    }
+  ]
+}

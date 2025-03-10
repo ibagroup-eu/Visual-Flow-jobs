@@ -27,9 +27,9 @@ import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.SparkSession
 
 private[read] final class MongoReadStage(
-    override val id: String,
+    override val configNode: Node,
     mongoConfig: Map[String, String]
-) extends ReadStage(id, MongoStageConfig.storageId) {
+) extends ReadStage(configNode, MongoStageConfig.storageId) {
 
     override val builder: StageBuilder = MongoReadStageBuilder
 
@@ -49,6 +49,6 @@ object MongoReadStageBuilder extends ReadStageBuilder {
     override protected def convert(config: Node): Stage = {
       val mongo = new MongoStageConfig(config)
       val mongoMap = mongo.mongoParams
-      new MongoReadStage(config.id, mongoMap)
+      new MongoReadStage(config, mongoMap)
     }
 }

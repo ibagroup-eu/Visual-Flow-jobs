@@ -68,12 +68,12 @@ class JdbcWriteStageTest extends AnyFunSpec with PrivateMethodTester with Mockit
     )))
     when(dfWriter.format(JdbcWriteStageBuilder.jdbcStorage)).thenReturn(dfWriter)
     when(dfWriter.mode("overwrite")).thenReturn(dfWriter)
-    when(dfWriter.options(config + ("createTableColumnTypes" -> "n1 VARCHAR(255),n3 VARCHAR(255)"))).thenReturn(dfWriter)
+    when(dfWriter.options(config + ("createTableColumnTypes" -> "n1 VARCHAR(1024),n3 VARCHAR(1024)"))).thenReturn(dfWriter)
     doNothing.when(dfWriter).save()
 
     doNothing.when(context).addFile("jdbc-source-truststore.jks")
 
-    val stage = new JdbcWriteStage(id, schemaTable, Some("jdbc-source-truststore.jks"), Some("overwrite"), config, TruncateMode.Simple)
+    val stage = new JdbcWriteStage(Node(id, Map()), schemaTable, Some("jdbc-source-truststore.jks"), Some("overwrite"), config, TruncateMode.Simple)
     stage.write(df)
   }
 }

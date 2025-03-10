@@ -1,0 +1,59 @@
+{
+  "nodes": [
+    {
+      "id": "read1",
+      "value": {
+        "operation": "READ",
+        "storage": "s3",
+        "endpoint": "s3.amazonaws.com",
+        "ssl": "false",
+        "accessKey": "",
+        "secretKey": "",
+        "bucket": "vf-demo-data-lake",
+        "path": "text",
+        "format": "text",
+        "wholetext":  "true",
+        "anonymousAccess": "false"
+      }
+    },
+    {
+      "id": "gen-ai",
+      "value": {
+        "operation": "AI_TEXT_TASK",
+        "task": "generateData",
+        "llm": "ChatGPT",
+        "endpoint": "https://api.openai.com/v1/chat/completions",
+        "model": "gpt-3.5-turbo",
+        "apiKey": "",
+        "numberOfRecords": "3",
+        "temperature": "1.5",
+        "systemMessage": "You are synthetic data generator.",
+        "attributes": "eyJhdHRyaWJ1dGVzIjpbeyJuYW1lIjoiT1JJR0lOX0NPVU5UUlkiLCJkZWZpbml0aW9uIjoiQ291bnRyeSBvZiB0aGUgZmxpZ2h0IG9yaWdpbiJ9LHsibmFtZSI6Ik9SSUdJTl9DSVRZIiwiZGVmaW5pdGlvbiI6IkNpdHkgb2YgdGhlIGZsaWdodCBvcmlnaW4ifSx7Im5hbWUiOiJERVNUSU5BVElPTl9DT1VOVFJZIiwiZGVmaW5pdGlvbiI6IkNvdW50cnkgb2YgdGhlIGZsaWdodCBkZXN0aW5hdGlvbiJ9LHsibmFtZSI6IkRFU1RJTkFUSU9OX0NJVFkiLCJkZWZpbml0aW9uIjoiQ2l0eSBvZiB0aGUgZmxpZ2h0IGRlc3RpbmF0aW9uIn0seyJuYW1lIjoiQUlSUExBTkVfTkFNRSIsImRlZmluaXRpb24iOiJOYW1lIG9mIHRoZSBhaXJwbGFuZSJ9LHsibmFtZSI6IkZMSUdIVF9EVVJBVElPTiIsImRlZmluaXRpb24iOiJGbGlnaHQgZHVyYXRpb24gKGluIGhvdXJzKSJ9XX0K",
+        "examples": "eyJleGFtcGxlcyI6W3sidXNlciI6IkdlbmVyYXRlIHN5bnRoZXRpYyBkYXRhIG9mIG9uZSByZWNvcmQgb24gZmxpZ2h0cyB3aXRoIHRoZSBmb2xsb3dpbmcgY29sdW1uczogT1JJR0lOX0NPVU5UUlksIE9SSUdJTl9DSVRZLCBERVNUSU5BVElPTl9DT1VOVFJZLCBERVNUSU5BVElPTl9DSVRZLCBBSVJQTEFORV9OQU1FLCBGTElHSFRfRFVSQVRJT04uIiwiYXNzaXN0YW50IjoiZXlKUFVrbEhTVTVmUTA5VlRsUlNXU0k2SWxWdWFYUmxaQ0JUZEdGMFpYTWlMQ0pQVWtsSFNVNWZRMGxVV1NJNklrNWxkeUJaYjNKcklpd2lSRVZUVkVsT1FWUkpUMDVmUTA5VlRsUlNXU0k2SWtaeVlXNWpaU0lzSWtSRlUxUkpUa0ZVU1U5T1gwTkpWRmtpT2lKUVlYSnBjeUlzSWtGSlVsQk1RVTVGWDA1QlRVVWlPaUpDYjJWcGJtY2dOelEzSWl3aVJreEpSMGhVWDBSVlVrRlVTVTlPSWpvaU55SjlDZz09In1dfQo="
+      }
+    },
+    {
+      "id": "write1",
+      "value": {
+        "operation": "WRITE",
+        "jdbcUrl": "jdbc:postgresql://okd4w1.okd.gomel.iba.by:31433/example",
+        "storage": "postgresql",
+        "schema": "public",
+        "table": "FLIGHT_DETAILS",
+        "writeMode": "overwrite",
+        "user": "",
+        "password": ""
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "read1",
+      "target": "gen-ai"
+    },
+    {
+      "source": "gen-ai",
+      "target": "write1"
+    }
+  ]
+}

@@ -26,14 +26,14 @@ import org.apache.spark.sql.execution.datasources.jdbc.JDBCOptions
 import org.apache.spark.sql.types.{StringType, StructField}
 import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 
-private[write] final class JdbcWriteStage(
-    override val id: String,
-    schemaTable: String,
+private[write] class JdbcWriteStage(
+    override val configNode: Node,
+    fullyQualifiedTable: String,
     truststorePath: Option[String],
     saveMode: Option[String],
     jdbcConfig: Map[String, String],
     truncateMode: TruncateMode.Value
-) extends WriteStage(id, JdbcWriteStageBuilder.jdbcStorage) {
+) extends WriteStage(configNode, JdbcWriteStageBuilder.jdbcStorage) {
 
   override val builder: StageBuilder = JdbcWriteStageBuilder
 
@@ -46,13 +46,13 @@ private[write] final class JdbcWriteStage(
       field match {
         case StructField(name: String, _: StringType, _, _) =>
           val p = prev.map(_ + ",").getOrElse("")
-          Some(s"$p${name} VARCHAR(255)")
+          Some(s"$p${name} VARCHAR(1024)")  // TODO: Fix hardcoded value
         case _ => prev
       }
     }
 
     val config = jdbcConfig +
-      (JDBCOptions.JDBC_TABLE_NAME -> schemaTable) ++
+      (JDBCOptions.JDBC_TABLE_NAME -> fullyQualifiedTable) ++
       alteredTypes.map(fields => Map("createTableColumnTypes" -> fields)).getOrElse(Map.empty)
 
     val dfWriter = getDfWriter(df, saveMode)
@@ -83,7 +83,7 @@ object JdbcWriteStageBuilder extends JdbcStageBuilder with WriteStageBuilder {
     validateJdbc(config)
 
   override protected def convert(config: Node): Stage = {
-    val (schemaTable, map) = jdbcParams(config)
+    val (fullyQualifiedTable, map) = jdbcParams(config)
     val truststorePathOption = if (config.value.contains(fieldCertData)) Some(truststorePath) else None
     val saveMode = config.value.get(fieldWriteMode)
     if (config.value.contains(fieldTruncateMode) && !TruncateMode.isKnownMode(config.value(fieldTruncateMode))) {
@@ -91,7 +91,7 @@ object JdbcWriteStageBuilder extends JdbcStageBuilder with WriteStageBuilder {
     }
     val truncateMode = if (config.value.contains(fieldTruncateMode))
       TruncateMode.withName(config.value(fieldTruncateMode)) else TruncateMode.None
-    new JdbcWriteStage(config.id, schemaTable, truststorePathOption, saveMode, map, truncateMode)
+    new JdbcWriteStage(config, fullyQualifiedTable, truststorePathOption, saveMode, map, truncateMode)
   }
 }
 

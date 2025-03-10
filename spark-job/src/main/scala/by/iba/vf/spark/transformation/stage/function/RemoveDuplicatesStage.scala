@@ -32,7 +32,7 @@ import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.functions.desc
 import org.apache.spark.sql.functions.row_number
 
-class RemoveDuplicatesStage(val id: String, keyColumns: Seq[Column], orderColumns: Seq[Column]) extends Stage {
+class RemoveDuplicatesStage(val configNode: Node, keyColumns: Seq[Column], orderColumns: Seq[Column]) extends Stage {
   override val operation: OperationType.Value = OperationType.REMOVE_DUPLICATES
   override val inputsRequired: Int = 1
   override val builder: StageBuilder = RemoveDuplicatesStageBuilder
@@ -76,6 +76,6 @@ object RemoveDuplicatesStageBuilder extends StageBuilder {
           throw new TransformationConfigurationException(s"bad order column format: $colStr")
       }
     }
-    new RemoveDuplicatesStage(config.id, keyColumns.toSeq, orderColumns.toSeq)
+    new RemoveDuplicatesStage(config, keyColumns.toSeq, orderColumns.toSeq)
   }
 }

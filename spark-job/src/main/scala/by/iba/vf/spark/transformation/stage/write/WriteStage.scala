@@ -18,6 +18,7 @@
  */
 package by.iba.vf.spark.transformation.stage.write
 
+import by.iba.vf.spark.transformation.config.Node
 import by.iba.vf.spark.transformation.stage.OperationType
 import by.iba.vf.spark.transformation.stage.Stage
 import by.iba.vf.spark.transformation.stage.StageBuilder
@@ -29,7 +30,7 @@ import org.apache.spark.sql.SparkSession
 import java.io.ByteArrayOutputStream
 import scala.util.Using
 
-protected abstract class WriteStage(val id: String, storage: String) extends Stage {
+protected abstract class WriteStage(val configNode: Node, storage: String) extends Stage {
   override val operation: OperationType.Value = OperationType.WRITE
   override val inputsRequired: Int = 1
 
@@ -44,15 +45,9 @@ protected abstract class WriteStage(val id: String, storage: String) extends Sta
     val df = input.values.head
     log(s"Writing to $storage, stage $id")
     write(df)
-    Using(new ByteArrayOutputStream){ outCapture =>
-      Console.withOut(outCapture) {
-        df.show(10, truncate = false)
-      }
-      val result = new String(outCapture.toByteArray)
-      log(f"Written data sample(top 10 rows):%n$result")
-      log(s"Total number of rows written: ${df.count()}")
-    }
-    None
+    logger.info("Write stage schema:\n{}", df.schema.treeString)
+    logger.info("Total number of rows written: {}", df.count())
+    Some(df)
   }
 }
 

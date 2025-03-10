@@ -56,7 +56,7 @@ class ElasticWriteStageTest extends AnyFunSpec with PrivateMethodTester with Moc
     when(dfWriter.options(config)).thenReturn(dfWriter)
     doNothing.when(dfWriter).save("idx")
 
-    val stage = new ElasticWriteStage(id, index, None, None, config)
+    val stage = new ElasticWriteStage(Node(id, Map()), index, None, None, config)
     stage.write(df)
   }
 }

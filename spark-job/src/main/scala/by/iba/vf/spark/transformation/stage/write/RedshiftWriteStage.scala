@@ -23,8 +23,8 @@ import by.iba.vf.spark.transformation.exception.TransformationConfigurationExcep
 import by.iba.vf.spark.transformation.stage.{RedshiftStageConfig, Stage, StageBuilder, WriteStageBuilder}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
-class RedshiftWriteStage(override val id: String, config: RedshiftStageConfig)
-  extends WriteStage(id, RedshiftStageConfig.storageId) {
+class RedshiftWriteStage(override val configNode: Node, config: RedshiftStageConfig)
+  extends WriteStage(configNode, RedshiftStageConfig.storageId) {
   override def write(df: DataFrame)(implicit spark: SparkSession): Unit = {
     config.setUpConfigParams(spark.sparkContext)
     var options = config.provideConnectionOptions
@@ -47,6 +47,6 @@ object RedshiftWriteStageBuilder extends WriteStageBuilder {
   }
 
   override protected def convert(config: Node): Stage = {
-    new RedshiftWriteStage(config.id, new RedshiftStageConfig(config))
+    new RedshiftWriteStage(config, new RedshiftStageConfig(config))
   }
 }

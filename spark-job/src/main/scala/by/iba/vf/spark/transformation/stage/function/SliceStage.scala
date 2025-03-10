@@ -23,7 +23,7 @@ import by.iba.vf.spark.transformation.stage.{OperationType, Stage, StageBuilder}
 import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
-private[function] final class SliceStage(val id: String, mode: SliceType.Value, columns: Seq[String]) extends Stage {
+private[function] final class SliceStage(val configNode: Node, mode: SliceType.Value, columns: Seq[String]) extends Stage {
   override val operation: OperationType.Value = OperationType.SLICE
   override val inputsRequired: Int = 1
   override val builder: StageBuilder = SliceStageBuilder
@@ -56,7 +56,7 @@ object SliceStageBuilder extends StageBuilder {
   override protected def convert(config: Node): Stage = {
     val columns: Seq[String] = config.value(fieldColumns).split(",\\s*").toSeq
     val mode: SliceType.Value = SliceType.withName(config.value(fieldMode).toUpperCase)
-    new SliceStage(config.id, mode, columns)
+    new SliceStage(config, mode, columns)
   }
 }
 

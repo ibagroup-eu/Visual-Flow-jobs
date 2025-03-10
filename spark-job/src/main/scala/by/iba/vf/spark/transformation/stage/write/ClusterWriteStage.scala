@@ -25,8 +25,8 @@ import org.apache.spark.sql.{DataFrame, DataFrameWriter, Row, SparkSession}
 import org.zeroturnaround.zip.ZipUtil
 import java.io.File
 
-class ClusterWriteStage(override val id: String, var options: Map[String, String], config: ClusterStageConfig)
-  extends WriteStage(id, ClusterStageConfig.storageId) {
+class ClusterWriteStage(override val configNode: Node, var options: Map[String, String], config: ClusterStageConfig)
+  extends WriteStage(configNode, ClusterStageConfig.storageId) {
 
   override def write(df: DataFrame)(implicit spark: SparkSession): Unit = {
     if (config.format == "avro" && !config.useSchema)
@@ -51,5 +51,5 @@ object ClusterWriteStageBuilder extends WriteStageBuilder {
   }
 
   override protected def convert(config: Node): Stage =
-    new ClusterWriteStage(config.id,  getOptions(config.value), new ClusterStageConfig(config))
+    new ClusterWriteStage(config,  getOptions(config.value), new ClusterStageConfig(config))
 }

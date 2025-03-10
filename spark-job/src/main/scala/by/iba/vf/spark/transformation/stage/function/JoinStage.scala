@@ -27,9 +27,10 @@ import org.apache.spark.sql.SparkSession
 import by.iba.vf.spark.transformation.exception.TransformationConfigurationException
 
 private[function] final class JoinStage(
-    val id: String,
+    val configNode: Node,
     joinType: String,
     columnMap: Map[String, Option[String]],
+    selectedColumns: Array[String],
     leftDataset: String,
     rightDataset: String
   ) extends Stage {
@@ -44,11 +45,13 @@ private[function] final class JoinStage(
   private def join(l: DataFrame, r: DataFrame): DataFrame =
     joinType match {
       case "cross" => l.crossJoin(r)
+                        .select(selectedColumns.head, selectedColumns.tail: _*)
       case _ =>
         columnMap("columns") match {
           case Some(columns) =>
             val columnsSeq = columns.split(",").map(_.trim)
             l.as("left").join(r.as("right"), columnsSeq, joinType)
+              .select(selectedColumns.head, selectedColumns.tail: _*)
           case None =>
             (columnMap("leftColumns"), columnMap("rightColumns")) match {
               case (Some(leftColumns), Some(rightColumns)) =>
@@ -63,6 +66,7 @@ private[function] final class JoinStage(
                   columns = columns && l(left) === r(right)
 
                 l.as("left").join(r.as("right"), columns, joinType)
+                  .select(selectedColumns.head, selectedColumns.tail: _*)
               case (Some(_), None) =>
                 throw new TransformationConfigurationException("rightColumns field not found")
               case (None, Some(_)) =>
@@ -82,6 +86,8 @@ object JoinStageBuilder extends StageBuilder {
   private val FieldRightColumns = "rightColumns"
   private val FieldLeftDataset = "leftDataset"
   private val FieldRightDataset = "rightDataset"
+  private val FieldSelectedLeftColumns = "selectedLeftColumns"
+  private val FieldSelectedRightColumns = "selectedRightColumns"
 
   override protected def validate(config: Map[String, String]): Boolean =
     (config.get(fieldOperation).contains(OperationType.JOIN.toString) && config.contains(FieldJoinType) && (config
@@ -98,8 +104,17 @@ object JoinStageBuilder extends StageBuilder {
     val columns = config.value.get(FieldColumns)
     val leftColumns = config.value.get(FieldLeftColumns)
     val rightColumns = config.value.get(FieldRightColumns)
+    val selectedLeftColumns = config.value.getOrElse(FieldSelectedLeftColumns, "*")
+      .split(",")
+      .map(_.trim)
+      .map(col => s"left.$col")
+    val selectedRightColumns = config.value.getOrElse(FieldSelectedRightColumns, "*")
+      .split(",")
+      .map(_.trim)
+      .map(col => s"right.$col")
 
     val columnMap = Map("columns" -> columns, "leftColumns" -> leftColumns, "rightColumns" -> rightColumns)
-    new JoinStage(id, joinType, columnMap, leftDataset, rightDataset)
+    val selectedColumns = selectedLeftColumns.union(selectedRightColumns)
+    new JoinStage(config, joinType, columnMap, selectedColumns, leftDataset, rightDataset)
   }
 }

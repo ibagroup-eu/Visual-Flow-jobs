@@ -24,9 +24,9 @@ import by.iba.vf.spark.transformation.stage.RedisStageConfig._
 import by.iba.vf.spark.transformation.stage.{ReadStageBuilder, RedisStageConfig, Stage, StageBuilder}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
-class RedisReadStage(override val id: String,
+class RedisReadStage(override val configNode: Node,
                      redisConfig: RedisStageConfig,
-                    ) extends ReadStage(id, RedisStageConfig.storageId) {
+                    ) extends ReadStage(configNode, RedisStageConfig.storageId) {
   override def read(implicit spark: SparkSession): DataFrame = {
     var options: Map[String, String] = redisConfig.provideConnectionOptions
     List(
@@ -58,6 +58,6 @@ object RedisReadStageBuilder extends ReadStageBuilder {
         )
 
   override protected def convert(config: Node): Stage = {
-    new RedisReadStage(config.id, new RedisStageConfig(config))
+    new RedisReadStage(config, new RedisStageConfig(config))
   }
 }

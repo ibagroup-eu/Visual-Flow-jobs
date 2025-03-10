@@ -1,0 +1,66 @@
+{
+  "nodes": [
+    {
+      "id": "read1",
+      "value": {
+        "operation": "READ",
+        "storage": "s3",
+        "endpoint": "s3.amazonaws.com",
+        "ssl": "false",
+        "accessKey": "",
+        "secretKey": "",
+        "bucket": "vf-demo-data-lake",
+        "path": "text",
+        "format": "text",
+        "wholetext":  "true",
+        "anonymousAccess": "false"
+      }
+    },
+    {
+      "id": "gen-ai",
+      "value": {
+        "operation": "AI_TEXT_TASK",
+        "task": "parseText",
+        "llm": "ChatGPT",
+        "endpoint": "https://api.openai.com/v1/chat/completions",
+        "model": "gpt-3.5-turbo",
+        "apiKey": "",
+        "sourceColumn": "value",
+        "maxTokens": "1024",
+        "temperature": "0.7",
+        "systemMessage": "You are client feedback assistant for the airline company. If you can't detect origin country try to get it by origin city as much as possible that is most known for this city. If you can't detect destination country try to get it by destination city as much as possible that is most known for this city.",
+        "keepExtraAttributes": "false",
+        "attributes": "eyJhdHRyaWJ1dGVzIjpbeyJuYW1lIjoiT1JJR0lOX0NPVU5UUlkiLCJkZWZpbml0aW9uIjoiQ291bnRyeSBvZiB0aGUgZmxpZ2h0IG9yaWdpbiIsInBsYWNlaG9sZGVyIjoiVU5ERUZJTkVEIiwiY29uZmlkZW5jZVRocmVzaG9sZCI6IjAuNSJ9LHsibmFtZSI6Ik9SSUdJTl9DSVRZIiwiZGVmaW5pdGlvbiI6IkNpdHkgb2YgdGhlIGZsaWdodCBvcmlnaW4iLCJwbGFjZWhvbGRlciI6IlVOREVGSU5FRCIsImNvbmZpZGVuY2VUaHJlc2hvbGQiOiIwLjUifSx7Im5hbWUiOiJERVNUSU5BVElPTl9DT1VOVFJZIiwiZGVmaW5pdGlvbiI6IkNvdW50cnkgb2YgdGhlIGZsaWdodCBkZXN0aW5hdGlvbiIsInBsYWNlaG9sZGVyIjoiVU5ERUZJTkVEIiwiY29uZmlkZW5jZVRocmVzaG9sZCI6IjAuNSJ9LHsibmFtZSI6IkRFU1RJTkFUSU9OX0NJVFkiLCJkZWZpbml0aW9uIjoiQ2l0eSBvZiB0aGUgZmxpZ2h0IGRlc3RpbmF0aW9uIiwicGxhY2Vob2xkZXIiOiJVTkRFRklORUQiLCJjb25maWRlbmNlVGhyZXNob2xkIjoiMC41In0seyJuYW1lIjoiU1VQUE9SVF9TUEVDSUFMSVNUIiwiZGVmaW5pdGlvbiI6IlN1cHBvcnQgc3BlY2lhbGlzdCBuYW1lIChGaXJzdCBOYW1lICYgTGFzdCBOYW1lKSIsInBsYWNlaG9sZGVyIjoiVU5ERUZJTkVEIiwiY29uZmlkZW5jZVRocmVzaG9sZCI6IjAuNSJ9LHsibmFtZSI6IlNFTlRJTUVOVF9UWVBFIiwiZGVmaW5pdGlvbiI6IlNlbnRpbWVudCB0eXBlLCBvbmUgb2YgdGhlIHZhbHVlczogcG9zaXRpdmUsIG5lZ2F0aXZlLCBuZXV0cmFsIiwicGxhY2Vob2xkZXIiOiJVTkRFRklORUQiLCJjb25maWRlbmNlVGhyZXNob2xkIjoiMC41In0seyJuYW1lIjoiU0VOVElNRU5UX1JFQVNPTiIsImRlZmluaXRpb24iOiJTZW50aW1lbnQgcmVhc29uLCBvciByZWFzb24gb2YgdGhlIGNsaWVudCBmZWVkYmFjayIsInBsYWNlaG9sZGVyIjoiVU5ERUZJTkVEIiwiY29uZmlkZW5jZVRocmVzaG9sZCI6IjAuNSJ9LHsibmFtZSI6IlJPT1RfQ0FVU0UiLCJkZWZpbml0aW9uIjoiVGhlIHJvb3QgY2F1c2Ugb2YgdGhlIGNsaWVudCBmZWVkYmFjayIsInBsYWNlaG9sZGVyIjoiVU5ERUZJTkVEIiwiY29uZmlkZW5jZVRocmVzaG9sZCI6IjAuNSJ9XX0K",
+        "examples": "eyJleGFtcGxlcyI6W3sidXNlciI6Ik15IGZsaWdodCBmcm9tIFNvZmlhIHRvIFN0b2NraG9sbSB3YXMgZGVsYXllZCBmb3IgOCBob3VycyBkdWUgdG8gdGhlIHNub3dmYWxsIGluIEhlbHNpbmtpISEgQW5kIEkgaGFkIHRvIHdhaXQgaW4gdGhhdCBhaXJwb3J0IG9mIEtyYWtvdyEgU3VwcG9ydCBzcGVjaWFsaXN0IEpvaG4gRG9lIGRpZCBub3Qgc3VnZ2VzdCBtZSBhbHRlcm5hdGl2ZSBmbGlnaHRzISBJIGFtIHZlcnkgZGlzYXBwb2ludGVkIHdpdGggdGhlIGNvbXBhbnkgYW5kIHRoZSBxdWFsaXR5IG9mIHN1cHBvcnQhISIsImFzc2lzdGFudCI6ImV5SlBVa2xIU1U1ZlEwOVZUbFJTV1NJNklrSjFiR2RoY21saElpd2lUMUpKUjBsT1gwTkpWRmtpT2lKVGIyWnBZU0lzSWtSRlUxUkpUa0ZVU1U5T1gwTlBWVTVVVWxraU9pSlRkMlZrWlc0aUxDSkVSVk5VU1U1QlZFbFBUbDlEU1ZSWklqb2lVM1J2WTJ0b2IyeHRJaXdpVTFWUVVFOVNWRjlUVUVWRFNVRk1TVk5VSWpvaVNtOW9iaUJFYjJVaUxDSlRSVTVVU1UxRlRsUmZWRmxRUlNJNklrNWxaMkYwYVhabElpd2lVMFZPVkVsTlJVNVVYMUpGUVZOUFRpSTZJa1pzYVdkb2RDQmtaV3hoZVNJc0lsSlBUMVJmUTBGVlUwVWlPaUpUYm05M1ptRnNiQ0o5Q2c9PSJ9XX0K"
+      }
+    },
+    {
+      "id": "write1",
+      "value": {
+        "operation": "WRITE",
+        "storage": "s3",
+        "endpoint": "s3.amazonaws.com",
+        "ssl": "false",
+        "accessKey": "",
+        "secretKey": "",
+        "bucket": "vf-demo-data-lake",
+        "path": "parsed_text",
+        "format": "csv",
+        "header": "true",
+        "anonymousAccess": "false",
+        "writeMode": "overwrite"
+      }
+    }
+
+  ],
+  "edges": [
+    {
+      "source": "read1",
+      "target": "gen-ai"
+    },
+    {
+      "source": "gen-ai",
+      "target": "write1"
+    }
+  ]
+}

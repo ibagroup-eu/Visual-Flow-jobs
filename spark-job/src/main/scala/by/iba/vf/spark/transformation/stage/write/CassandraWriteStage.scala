@@ -24,9 +24,9 @@ import by.iba.vf.spark.transformation.stage.{CassandraStageConfig, Stage, StageB
 import org.apache.spark.sql.cassandra.DataFrameWriterWrapper
 import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 
-class CassandraWriteStage(override val id: String,
+class CassandraWriteStage(override val configNode: Node,
                           cassandraStageConfig: CassandraStageConfig,
-                         ) extends WriteStage(id, CassandraStageConfig.storageId) {
+                         ) extends WriteStage(configNode, CassandraStageConfig.storageId) {
   override def write(df: DataFrame)(implicit spark: SparkSession): Unit = {
     cassandraStageConfig.applyConfig(spark)
     cassandraStageConfig.writeMode.foreach(sm => {
@@ -50,6 +50,6 @@ object CassandraWriteStageBuilder extends WriteStageBuilder {
 
   override protected def convert(config: Node): Stage = {
     val cassandraConfig = new CassandraStageConfig(config)
-    new CassandraWriteStage(config.id, cassandraConfig)
+    new CassandraWriteStage(config, cassandraConfig)
   }
 }

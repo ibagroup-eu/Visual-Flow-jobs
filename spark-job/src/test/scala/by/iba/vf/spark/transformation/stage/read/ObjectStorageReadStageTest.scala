@@ -18,8 +18,8 @@
  */
 package by.iba.vf.spark.transformation.stage.read
 
-import by.iba.vf.spark.transformation.stage.COSConfig
-import by.iba.vf.spark.transformation.stage.S3Config
+import by.iba.vf.spark.transformation.config.Node
+import by.iba.vf.spark.transformation.stage.config.objectstores.{COSConfig, S3Config}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.DataFrameReader
 import org.apache.spark.sql.SparkSession
@@ -36,10 +36,10 @@ class ObjectStorageReadStageTest extends AnyFunSpec with PrivateMethodTester wit
     val dfReader = mock[DataFrameReader]
     val spark = mock[SparkSession]
     val optionsMap = Map("a" -> "b", "b" -> "c")
-    val stage = new ObjectStorageReadStage("id1", ObjectStorageReadCOSStageBuilder, cosConfig, optionsMap, "cos_storage")
+    val stage = new ObjectStorageReadStage(Node("id1", Map()), ObjectStorageReadCOSStageBuilder, cosConfig, optionsMap, "cos_storage")
 
     when(dfReader.options(optionsMap)).thenReturn(dfReader)
-    when(cosConfig.format).thenReturn("csv")
+    when(cosConfig.format).thenReturn(Some("csv"))
     when(cosConfig.connectPath).thenReturn("cp")
     doNothing.when(cosConfig).setConfig(spark)
 
@@ -58,10 +58,10 @@ class ObjectStorageReadStageTest extends AnyFunSpec with PrivateMethodTester wit
     val dfReader = mock[DataFrameReader]
     val spark = mock[SparkSession]
     val optionsMap = Map("a" -> "b", "b" -> "c")
-    val stage = new ObjectStorageReadStage("id1", ObjectStorageReadS3StageBuilder, s3Config, optionsMap, "cos_storage")
+    val stage = new ObjectStorageReadStage(Node("id1", Map()), ObjectStorageReadS3StageBuilder, s3Config, optionsMap, "cos_storage")
 
     when(dfReader.options(optionsMap)).thenReturn(dfReader)
-    when(s3Config.format).thenReturn("csv")
+    when(s3Config.format).thenReturn(Some("csv"))
     when(s3Config.connectPath).thenReturn("cp")
     doNothing.when(s3Config).setConfig(spark)
 

@@ -273,7 +273,7 @@ class DateTimeStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodT
       else if (config("function") == "from_unixtime")
         when(df.withColumn(getOptions(config)("targetColumn"), from_unixtime(col(getOptions(config)("sourceColumn")),
           getOptions(config)("format")))).thenReturn(df2)
-      val stage = new DateTimeStage("id", config("function"), getOptions(config))
+      val stage = new DateTimeStage(Node("id", Map()), config("function"), getOptions(config))
       val result = stage invokePrivate PrivateMethod[Option[DataFrame]]('process)(Map("1" -> df), spark)
       result should be(Some(df2))
     }

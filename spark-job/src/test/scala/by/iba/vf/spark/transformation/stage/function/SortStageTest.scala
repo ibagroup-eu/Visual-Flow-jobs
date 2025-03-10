@@ -36,7 +36,7 @@ class SortStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodTeste
     val df = mock[DataFrame]
     val df2 = mock[DataFrame]
     when(df.orderBy(asc("b"), desc("a"))).thenReturn(df2)
-    val stage = new SortStage("id", "fullSort", Seq(asc("b"), desc("a")))
+    val stage = new SortStage(Node("id", Map()), "fullSort", Seq(asc("b"), desc("a")))
 
     val result = stage invokePrivate PrivateMethod[Option[DataFrame]]('process)(Map("1" -> df), spark)
 
@@ -47,7 +47,7 @@ class SortStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodTeste
     val df = mock[DataFrame]
     val df2 = mock[DataFrame]
     when(df.orderBy(asc("b"), desc("a"))).thenReturn(df2)
-    val stage = new SortStage("id", "fullSort", Seq(asc("b"), desc("a")))
+    val stage = new SortStage(Node("id", Map()), "fullSort", Seq(asc("b"), desc("a")))
 
     val result = stage.sort(df)
 

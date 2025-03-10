@@ -1,0 +1,32 @@
+{
+  "nodes": [
+    {
+      "id": "read1",
+      "value": {
+        "operation": "READ",
+        "storage": "snowflake",
+        "sfURL": "",
+        "sfUser": "",
+        "sfPassword": "",
+        "sfDatabase": "",
+        "sfSchema": "",
+        "sfWarehouse": "",
+        "sfRole": "",
+        "dbtable": ""
+      }
+    },
+    {
+      "id": "print1",
+      "value": {
+        "operation": "WRITE",
+        "storage": "STDOUT"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "read1",
+      "target": "print1"
+    }
+  ]
+}

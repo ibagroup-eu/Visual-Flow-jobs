@@ -91,7 +91,7 @@ class RedshiftWriteStageTest extends AnyFunSpec with PrivateMethodTester with Mo
     doNothing.when(hadoopConfig).set("fs.s3a.access.key", accessKey)
     doNothing.when(hadoopConfig).set("fs.s3a.secret.key", secretKey)
     doNothing.when(dfWriter).save
-    new RedshiftWriteStage(id, config).write(df)
+    new RedshiftWriteStage(Node(id, Map()), config).write(df)
   }
 }
 

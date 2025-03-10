@@ -1,0 +1,63 @@
+{
+  "nodes": [
+    {
+      "id": "read1",
+      "value": {
+        "operation": "READ",
+        "storage": "s3",
+        "endpoint": "s3.amazonaws.com",
+        "ssl": "false",
+        "accessKey": "",
+        "secretKey": "",
+        "bucket": "vf-demo-data-lake",
+        "path": "demo-audio",
+        "format": "binaryFile",
+        "binaryFormat": "wav",
+        "outputContentColumn": "PARSED_CONTENT",
+        "outputPathColumn": "PATH",
+        "anonymousAccess": "false"
+      }
+    },
+    {
+      "id": "gen-ai",
+      "value": {
+        "operation": "AI_TEXT_TASK",
+        "task": "transcribe",
+        "llm": "ChatGPT",
+        "endpoint": "https://api.openai.com/v1/audio/transcriptions",
+        "model": "whisper-1",
+        "apiKey": "",
+        "sourceColumn": "PARSED_CONTENT",
+        "pathColumn": "PATH",
+        "outputColumn": "TRANSCRIBED_TEXT",
+        "temperature": "0.7"
+      }
+    },
+    {
+      "id": "write1",
+      "value": {
+        "operation": "WRITE",
+        "storage": "s3",
+        "endpoint": "s3.amazonaws.com",
+        "ssl": "false",
+        "accessKey": "",
+        "secretKey": "",
+        "bucket": "vf-demo-data-lake",
+        "path": "transcriptions",
+        "format": "json",
+        "anonymousAccess": "false",
+        "writeMode": "overwrite"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "read1",
+      "target": "gen-ai"
+    },
+    {
+      "source": "gen-ai",
+      "target": "write1"
+    }
+  ]
+}

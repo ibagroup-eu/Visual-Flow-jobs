@@ -39,7 +39,7 @@ class RemoveDuplicatesStageTest extends AnyFunSpec with MockitoSugar with Privat
     when(df.withColumn(*, *)).thenReturn(df)
     when(df.filter(col("row_number") === 1)).thenReturn(df)
     when(df.drop(colName = "row_number")).thenReturn(df2)
-    val stage = new RemoveDuplicatesStage("id", Seq(col("a")), Seq(asc("b"), desc("c")))
+    val stage = new RemoveDuplicatesStage(Node("id", Map()), Seq(col("a")), Seq(asc("b"), desc("c")))
 
       val result = stage invokePrivate PrivateMethod[Option[DataFrame]]('process)(Map("1" -> df), spark)
 

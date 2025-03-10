@@ -25,9 +25,9 @@ import by.iba.vf.spark.transformation.exception.NodeNotFoundException
 import by.iba.vf.spark.transformation.exception.UnknownStageException
 import by.iba.vf.spark.transformation.stage.Stage
 import by.iba.vf.spark.transformation.stage.StageBuilder
-import by.iba.vf.spark.transformation.stage.function.{CacheStageBuilder, ChangeDataCaptureStageBuilder, DateTimeStageBuilder, FilterStageBuilder, GroupByStageBuilder, HandleNullStageBuilder, JoinStageBuilder, PivotStageBuilder, RemoveDuplicatesStageBuilder, SliceStageBuilder, SortStageBuilder, StringStageBuilder, TransformStageBuilder, UnionStageBuilder, ValidateStageBuilder, WithColumnStageBuilder}
-import by.iba.vf.spark.transformation.stage.read.{CassandraReadStageBuilder, ClickhouseReadStageBuilder, ClusterReadStageBuilder, DataGeneratorStageBuilder, DataframeReadStageBuilder, ElasticReadStageBuilder, JdbcReadStageBuilder, MongoReadStageBuilder, ObjectStorageReadCOSStageBuilder, ObjectStorageReadS3StageBuilder, RedisReadStageBuilder, RedshiftReadStageBuilder, RequestReadStageBuilder}
-import by.iba.vf.spark.transformation.stage.write.{CassandraWriteStageBuilder, ClickhouseWriteStageBuilder, ClusterWriteStageBuilder, ElasticWriteStageBuilder, JdbcWriteStageBuilder, MongoWriteStageBuilder, ObjectStorageWriteCOSStageBuilder, ObjectStorageWriteS3StageBuilder, RedisWriteStageBuilder, RedshiftWriteStageBuilder, StdoutWriteStageBuilder}
+import by.iba.vf.spark.transformation.stage.function.{AITextTaskStageBuilder, CacheStageBuilder, ChangeDataCaptureStageBuilder, DateTimeStageBuilder, FilterStageBuilder, GroupByStageBuilder, HandleNullStageBuilder, JoinStageBuilder, PivotStageBuilder, RemoveDuplicatesStageBuilder, SliceStageBuilder, SortStageBuilder, StringStageBuilder, TransformStageBuilder, UnionStageBuilder, ValidateStageBuilder, WithColumnStageBuilder}
+import by.iba.vf.spark.transformation.stage.read.{AzureBlobStorageReadStageBuilder, CassandraReadStageBuilder, ClickhouseReadStageBuilder, ClusterReadStageBuilder, DataGeneratorStageBuilder, DatabricksNativeReadStageBuilder, DataframeReadStageBuilder, ElasticReadStageBuilder, GoogleCloudStorageReadStageBuilder, JdbcDatabricksReadStageBuilder, JdbcReadStageBuilder, KafkaReadStageBuilder, MongoReadStageBuilder, ObjectStorageReadCOSStageBuilder, ObjectStorageReadS3StageBuilder, RedisReadStageBuilder, RedshiftReadStageBuilder, RequestReadStageBuilder, SnowflakeReadStageBuilder}
+import by.iba.vf.spark.transformation.stage.write.{AzureBlobStorageWriteStageBuilder, CassandraWriteStageBuilder, ClickhouseWriteStageBuilder, ClusterWriteStageBuilder, DatabricksNativeWriteStageBuilder, ElasticWriteStageBuilder, GoogleCloudStorageWriteStageBuilder, JdbcDatabricksWriteStageBuilder, JdbcWriteStageBuilder, KafkaWriteStageBuilder, MongoWriteStageBuilder, ObjectStorageWriteCOSStageBuilder, ObjectStorageWriteS3StageBuilder, RedisWriteStageBuilder, RedshiftWriteStageBuilder, SnowflakeWriteStageBuilder, StdoutWriteStageBuilder}
 
 object ExecutionPlanBuilder {
 
@@ -43,12 +43,20 @@ object ExecutionPlanBuilder {
       ElasticWriteStageBuilder,
       JdbcReadStageBuilder,
       JdbcWriteStageBuilder,
+      JdbcDatabricksReadStageBuilder,
+      JdbcDatabricksWriteStageBuilder,
+      DatabricksNativeReadStageBuilder,
+      DatabricksNativeWriteStageBuilder,
       MongoReadStageBuilder,
       MongoWriteStageBuilder,
       ObjectStorageReadCOSStageBuilder,
       ObjectStorageReadS3StageBuilder,
+      AzureBlobStorageReadStageBuilder,
+      GoogleCloudStorageReadStageBuilder,
       ObjectStorageWriteCOSStageBuilder,
       ObjectStorageWriteS3StageBuilder,
+      AzureBlobStorageWriteStageBuilder,
+      GoogleCloudStorageWriteStageBuilder,
       CassandraWriteStageBuilder,
       CassandraReadStageBuilder,
       RedshiftReadStageBuilder,
@@ -73,8 +81,16 @@ object ExecutionPlanBuilder {
       ClickhouseWriteStageBuilder,
       PivotStageBuilder,
       HandleNullStageBuilder,
-      RequestReadStageBuilder
+      KafkaReadStageBuilder,
+      KafkaWriteStageBuilder,
+      RequestReadStageBuilder,
+      SnowflakeReadStageBuilder,
+      SnowflakeWriteStageBuilder,
+      AITextTaskStageBuilder
     )
+
+  def initEmptyExecutionPlan: ExecutionPlan =
+    ExecutionPlan(plan = Seq(), dependencyMap = Map())
 
   def buildExecutionPlan(pc: ProcessConfiguration): ExecutionPlan = {
     val dependencyMap = buildDependencyMap(pc)

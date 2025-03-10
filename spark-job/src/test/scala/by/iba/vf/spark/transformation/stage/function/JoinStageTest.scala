@@ -33,10 +33,12 @@ class JoinStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodTeste
   it("process") {
     implicit lazy val spark: SparkSession = mock[SparkSession]
     val columnMap = Map("leftColumns" -> None, "rightColumns" -> None, "columns" -> Option("test1"))
+    val selectedColumns = Array("left.*", "right.*")
     val joinType = "inner"
     val df = mock[DataFrame]
     val df2 = mock[DataFrame]
     val df3 = mock[DataFrame]
+    val df4 = mock[DataFrame]
     when(df.as("left")).thenReturn(df)
     when(df2.as("right")).thenReturn(df2)
     if (joinType == "cross") when(df.crossJoin(df2)).thenReturn(df3)
@@ -48,20 +50,23 @@ class JoinStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodTeste
       }
       when(df.join(df2, fieldsSeq, joinType)).thenReturn(df3)
     }
-    
-    val stage = new JoinStage("id", joinType, columnMap, "1", "2")
+    when(df3.select(selectedColumns.head, selectedColumns.tail: _*)).thenReturn(df4)
+
+    val stage = new JoinStage(Node("id", Map()), joinType, columnMap, selectedColumns, "1", "2")
 
     val result = stage invokePrivate PrivateMethod[Option[DataFrame]]('process)(Map("1" -> df, "2" -> df2), spark)
 
-    result should be(Some(df3))
+    result should be(Some(df4))
   }
 
   it("join") {
     val columnMap = Map("leftColumns" -> None, "rightColumns" -> None, "columns" -> Option("test1"))
+    val selectedColumns = Array("left.*", "right.*")
     val joinType = "inner"
     val df = mock[DataFrame]
     val df2 = mock[DataFrame]
     val df3 = mock[DataFrame]
+    val df4 = mock[DataFrame]
     when(df.as("left")).thenReturn(df)
     when(df2.as("right")).thenReturn(df2)
     if (joinType == "cross") when(df.crossJoin(df2)).thenReturn(df3)
@@ -72,14 +77,15 @@ class JoinStageTest extends AnyFunSpec with MockitoSugar with PrivateMethodTeste
         case None => throw new TransformationConfigurationException("columns field not found")
       }
       when(df.join(df2, fieldsSeq, joinType)).thenReturn(df3)
-
     }
 
-    val stage = new JoinStage("id", joinType, columnMap, "1", "2")
+    when(df3.select(selectedColumns.head, selectedColumns.tail: _*)).thenReturn(df4)
+
+    val stage = new JoinStage(Node("id", Map()), joinType, columnMap, selectedColumns, "1", "2")
 
     val result = stage invokePrivate PrivateMethod[DataFrame]('join)(df, df2)
 
-    result should be(df3)
+    result should be(df4)
   }
 }
 
@@ -91,7 +97,8 @@ class JoinStageBuilderTest extends AnyFunSpec with PrivateMethodTester {
         "joinType" -> "inner",
         "columns" -> "test1",
         "leftDataset" -> "1",
-        "rightDataset" -> "2"
+        "rightDataset" -> "2",
+        "selectedLeftColumns" -> "name"
       )
 
     val result = JoinStageBuilder invokePrivate PrivateMethod[Boolean]('validate)(config)
@@ -107,7 +114,8 @@ class JoinStageBuilderTest extends AnyFunSpec with PrivateMethodTester {
           "joinType" -> "inner",
           "columns" -> "test1",
           "leftDataset" -> "1",
-          "rightDataset" -> "2"
+          "rightDataset" -> "2",
+          "selectedLeftColumns" -> "name"
         )
       )
 

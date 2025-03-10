@@ -25,7 +25,7 @@ import by.iba.vf.spark.transformation.stage.StageBuilder
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.SparkSession
 
-private[function] final class FilterStage(val id: String, condition: String) extends Stage {
+private[function] final class FilterStage(val configNode: Node, condition: String) extends Stage {
   override val operation: OperationType.Value = OperationType.FILTER
   override val inputsRequired: Int = 1
   override val builder: StageBuilder = FilterStageBuilder
@@ -43,5 +43,5 @@ object FilterStageBuilder extends StageBuilder {
     config.get(fieldOperation).contains(OperationType.FILTER.toString) && config.contains(FieldCondition)
 
   override protected def convert(config: Node): Stage =
-    new FilterStage(config.id, config.value(FieldCondition))
+    new FilterStage(config, config.value(FieldCondition))
 }

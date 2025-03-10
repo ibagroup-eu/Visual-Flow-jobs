@@ -24,9 +24,9 @@ import by.iba.vf.spark.transformation.stage.RedisStageConfig._
 import by.iba.vf.spark.transformation.stage.{RedisStageConfig, Stage, StageBuilder, WriteStageBuilder}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
-class RedisWriteStage(override val id: String,
+class RedisWriteStage(override val configNode: Node,
                       redisConfig: RedisStageConfig,
-                     ) extends WriteStage(id, RedisStageConfig.storageId) {
+                     ) extends WriteStage(configNode, RedisStageConfig.storageId) {
   override def write(df: DataFrame)(implicit spark: SparkSession): Unit = {
     var options: Map[String, String] = redisConfig.provideConnectionOptions
     options += (tableActualName -> redisConfig.table.getOrElse(throw new TransformationConfigurationException("Table name was not provided")))
@@ -54,6 +54,6 @@ object RedisWriteStageBuilder extends WriteStageBuilder {
   }
 
   override protected def convert(config: Node): Stage = {
-    new RedisWriteStage(config.id, new RedisStageConfig(config))
+    new RedisWriteStage(config, new RedisStageConfig(config))
   }
 }

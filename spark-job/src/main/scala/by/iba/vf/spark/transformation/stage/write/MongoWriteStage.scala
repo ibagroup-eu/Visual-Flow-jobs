@@ -27,10 +27,10 @@ import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.SparkSession
 
 private[write] class MongoWriteStage(
-    override val id: String,
+    override val configNode: Node,
     saveMode: Option[String],
     mongoConfig: Map[String, String]
-) extends WriteStage(id, "mongo") {
+) extends WriteStage(configNode, "mongo") {
     override val builder: StageBuilder = MongoWriteStageBuilder
     
     override def write(df: DataFrame)(implicit spark: SparkSession): Unit = {
@@ -50,6 +50,6 @@ object MongoWriteStageBuilder extends WriteStageBuilder {
       val mongo = new MongoStageConfig(config)
       val mongoMap = mongo.mongoParams
       val mode = config.value.get("writeMode")
-      new MongoWriteStage(config.id, mode, mongoMap)
+      new MongoWriteStage(config, mode, mongoMap)
     }
 }

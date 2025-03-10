@@ -29,7 +29,7 @@ class RedisReadStageTest extends AnyFunSpec with PrivateMethodTester with Mockit
     when(dfReader.options(Map("table" -> table, "host" -> host,  "auth" -> password, "port" -> port, "ssl" -> "false"))).thenReturn(dfReader)
     when(dfReader.load).thenReturn(df)
 
-    val stage = new RedisReadStage(id, config)
+    val stage = new RedisReadStage(Node(id, Map()), config)
     stage.read
   }
 }
