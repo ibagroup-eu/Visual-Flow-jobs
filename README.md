@@ -8,8 +8,8 @@ Visual Flow is an ETL/ELT tool designed for effective data management via conven
   - Cassandra
   - Click House
   - DB2
-  - Databricks JDBC (only in global configuration)
-  - Databricks (only in Databricks configuration)
+  - Databricks JDBC (global configuration)
+  - Databricks (Databricks configuration)
   - Dataframe (for reading)
   - Google Cloud Storage
   - Elastic Search
@@ -23,6 +23,16 @@ Visual Flow is an ETL/ELT tool designed for effective data management via conven
   - PostgreSQL
   - Redis
   - Redshift
+  - REST API
+- It supports the following file formats:
+  - Delta Lake
+  - Parquet
+  - JSON
+  - CSV
+  - ORC
+  - Avro
+  - Text
+  - Binary (PDF, DOC, Audio files)
 - Leverage direct connectivity to enterprise applications as sources and targets
 - Perform data processing and transformation
 - Run custom code
